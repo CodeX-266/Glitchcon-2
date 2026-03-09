@@ -1,0 +1,41 @@
+patient_id,visit_id,procedure,department,cpt_code,charge_amount,claim_submitted,claim_status,insurance_paid,date
+P101,V001,MRI Brain,Radiology,70553,12000,Yes,Approved,12000,2024-01-01
+P102,V002,Blood Panel,Lab,80050,0,Yes,Approved,2000,2024-01-02
+P103,V003,CT Abdomen,Radiology,74178,15000,No,NA,0,2024-01-03
+P104,V004,Cardiac Echo,Cardiology,93306,10000,Yes,Denied,0,2024-01-04
+P105,V005,Knee Surgery,Surgery,27447,45000,Yes,Approved,32000,2024-01-05
+P106,V006,Colonoscopy,Gastro,45378,18000,Yes,Approved,18000,2024-01-06
+P107,V007,Ultrasound,Radiology,76700,8000,Yes,Approved,5000,2024-01-07
+P108,V008,Sleep Study,Neurology,95808,9000,No,NA,0,2024-01-08
+P109,V009,X-Ray Chest,Radiology,71020,3000,Yes,Approved,3000,2024-01-09
+P110,V010,Thyroid Test,Lab,84443,0,Yes,Approved,1200,2024-01-10
+P111,V011,Appendectomy,Surgery,44950,35000,Yes,Denied,0,2024-01-11
+P112,V012,Angiography,Cardiology,93510,28000,Yes,Approved,20000,2024-01-12
+P113,V013,CT Brain,Radiology,70450,14000,Yes,Approved,14000,2024-01-13
+P114,V014,Glucose Test,Lab,82947,0,Yes,Approved,600,2024-01-14
+P115,V015,Endoscopy,Gastro,43235,16000,Yes,Approved,12000,2024-01-15
+P116,V016,EEG,Neurology,95816,9000,No,NA,0,2024-01-16
+P117,V017,Stress Test,Cardiology,93015,11000,Yes,Approved,11000,2024-01-17
+P118,V018,Liver Panel,Lab,80076,4000,Yes,Approved,3000,2024-01-18
+P119,V019,Spine MRI,Radiology,72148,22000,Yes,Denied,0,2024-01-19
+P120,V020,Arthroscopy,Surgery,29881,38000,Yes,Approved,38000,2024-01-20
+P121,V021,CT Chest,Radiology,71260,15000,Yes,Approved,12000,2024-01-21
+P122,V022,Blood Culture,Lab,87040,0,Yes,Approved,1500,2024-01-22
+P123,V023,Angioplasty,Cardiology,92928,55000,Yes,Approved,45000,2024-01-23
+P124,V024,Gallbladder Surgery,Surgery,47562,42000,Yes,Approved,42000,2024-01-24
+P125,V025,Upper GI Endoscopy,Gastro,43239,14000,Yes,Denied,0,2024-01-25
+P126,V026,Nerve Conduction Study,Neurology,95907,9500,Yes,Approved,9500,2024-01-26
+P127,V027,Abdominal Ultrasound,Radiology,76705,7000,No,NA,0,2024-01-27
+P128,V028,Lipid Profile,Lab,80061,3000,Yes,Approved,2000,2024-01-28
+P129,V029,Pacemaker Implant,Cardiology,33208,75000,Yes,Approved,60000,2024-01-29
+P130,V030,Hernia Repair,Surgery,49505,30000,Yes,Approved,30000,2024-01-30
+P131,V031,Colonoscopy,Gastro,45378,17000,Yes,Approved,15000,2024-02-01
+P132,V032,Brain MRI,Radiology,70551,21000,Yes,Approved,21000,2024-02-02
+P133,V033,Complete Blood Count,Lab,85025,0,Yes,Approved,800,2024-02-03
+P134,V034,Angiogram,Cardiology,93508,32000,Yes,Denied,0,2024-02-04
+P135,V035,Knee Replacement,Surgery,27447,60000,Yes,Approved,48000,2024-02-05
+P136,V036,Esophageal Endoscopy,Gastro,43235,13000,Yes,Approved,13000,2024-02-06
+P137,V037,EEG Monitoring,Neurology,95951,10000,No,NA,0,2024-02-07
+P138,V038,Chest CT,Radiology,71250,16000,Yes,Approved,14000,2024-02-08
+P139,V039,Vitamin D Test,Lab,82306,2500,Yes,Approved,2500,2024-02-09
+P140,V040,Cardiac Catheterization,Cardiology,93458,48000,Yes,Approved,38000,2024-02-10
