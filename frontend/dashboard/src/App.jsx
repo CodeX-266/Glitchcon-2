@@ -3,7 +3,7 @@ import { API_URL } from "./config/api";
 import { transformAlerts } from "./utils/transforms";
 import { auth, db } from "./config/firebase";
 import { signOut, onAuthStateChanged } from "firebase/auth";
-import { doc, onSnapshot, collection } from "firebase/firestore";
+import { doc, onSnapshot, collection, setDoc, getDoc } from "firebase/firestore";
 import { AlertTriangle, LogOut } from "lucide-react";
 
 import "./styles/theme.css";
@@ -29,7 +29,12 @@ export default function App() {
 
   const [loading, setLoading] = useState(alerts.length === 0);
 
-  useEffect(() => { localStorage.setItem("rld_alerts", JSON.stringify(alerts)); }, [alerts]);
+  useEffect(() => {
+    localStorage.setItem("rld_alerts", JSON.stringify(alerts));
+    if (alerts.length > 0) {
+      setDoc(doc(db, "system", "global_alerts"), { data: alerts }).catch(console.error);
+    }
+  }, [alerts]);
   useEffect(() => { localStorage.setItem("rld_notifs", JSON.stringify(notifs)); }, [notifs]);
 
   useEffect(() => {
@@ -45,11 +50,28 @@ export default function App() {
     try {
       const res = await fetch(`${API_URL}/alerts`);
       const data = await res.json();
+
       if (Array.isArray(data)) {
-        setAlerts(prev => {
-          const statusMap = {};
-          prev.forEach(a => { statusMap[a.id] = { status: a.status, assignedTo: a.assignedTo, notes: a.notes, priority: a.priority }; });
-          return transformAlerts(data).map(a => ({ ...a, ...(statusMap[a.id] || {}) }));
+        const baseAlerts = transformAlerts(data);
+        const statesSnap = await getDoc(doc(db, "system", "global_alerts"));
+        const fbAlerts = statesSnap.exists() ? statesSnap.data().data : [];
+
+        const fbMap = {};
+        fbAlerts.forEach(a => { fbMap[a.id] = a; });
+        setAlerts(baseAlerts.map(a => ({ ...a, ...(fbMap[a.id] || {}) })));
+
+        onSnapshot(doc(db, "system", "global_alerts"), (docSnap) => {
+          if (docSnap.exists() && docSnap.data().data) {
+            const liveAlerts = docSnap.data().data;
+            const liveMap = {};
+            liveAlerts.forEach(a => { liveMap[a.id] = a; });
+            setAlerts(prev => {
+              if (prev.length === 0) return prev;
+              const changed = prev.some(p => JSON.stringify(liveMap[p.id]) !== JSON.stringify(p));
+              if (!changed) return prev;
+              return prev.map(a => ({ ...a, ...(liveMap[a.id] || {}) }));
+            });
+          }
         });
       }
     } catch (e) { console.error("Failed to fetch alerts:", e); }
