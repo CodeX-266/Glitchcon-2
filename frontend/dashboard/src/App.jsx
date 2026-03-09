@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { API_URL } from "./config/api";
 import { transformAlerts } from "./utils/transforms";
 import { auth, db } from "./config/firebase";
@@ -29,14 +29,47 @@ export default function App() {
 
   const [loading, setLoading] = useState(alerts.length === 0);
 
+  // ── WRITE GUARD ──
+  const isWriting = useRef(false);
+  const snapshotUnsub = useRef(null);
+
+  // Helper: extract ONLY the mutable state fields per alert (small payload for Firebase)
+  const extractStates = (alertsArr) => {
+    const states = {};
+    alertsArr.forEach(a => {
+      // Only store alerts that have been modified from default "New" status
+      if (a.status !== "New" || a.assignedTo || (a.notes && a.notes.length > 0)) {
+        states[a.id] = {
+          status: a.status,
+          assignedTo: a.assignedTo || null,
+          priority: a.priority,
+          notes: a.notes || [],
+        };
+      }
+    });
+    return states;
+  };
+
+  // Persist alerts to localStorage always; sync ONLY state diffs to Firebase
   useEffect(() => {
     localStorage.setItem("rld_alerts", JSON.stringify(alerts));
     if (alerts.length > 0) {
-      setDoc(doc(db, "system", "global_alerts"), { data: alerts }).catch(console.error);
+      const states = extractStates(alerts);
+      isWriting.current = true;
+      setDoc(doc(db, "system", "alert_states"), { states })
+        .then(() => {
+          setTimeout(() => { isWriting.current = false; }, 500);
+        })
+        .catch((e) => {
+          console.error("Firebase sync error:", e);
+          isWriting.current = false;
+        });
     }
   }, [alerts]);
+
   useEffect(() => { localStorage.setItem("rld_notifs", JSON.stringify(notifs)); }, [notifs]);
 
+  // Listen to staff list from Firestore
   useEffect(() => {
     const unsubStaff = onSnapshot(collection(db, "users"), (snapshot) => {
       const usersList = [];
@@ -46,6 +79,7 @@ export default function App() {
     return () => unsubStaff();
   }, []);
 
+  // Fetch alerts from Python API + merge with Firebase saved states
   const fetchAlerts = async () => {
     try {
       const res = await fetch(`${API_URL}/alerts`);
@@ -53,30 +87,32 @@ export default function App() {
 
       if (Array.isArray(data)) {
         const baseAlerts = transformAlerts(data);
-        const statesSnap = await getDoc(doc(db, "system", "global_alerts"));
-        const fbAlerts = statesSnap.exists() ? statesSnap.data().data : [];
 
-        const fbMap = {};
-        fbAlerts.forEach(a => { fbMap[a.id] = a; });
-        // Make sure to merge fbMap over baseAlerts to NOT LOSE ASSIGNED STATES
-        setAlerts(baseAlerts.map(a => ({ ...a, ...(fbMap[a.id] || {}) })));
+        // Get saved states from Firebase (lightweight state map)
+        const statesSnap = await getDoc(doc(db, "system", "alert_states"));
+        const fbStates = statesSnap.exists() ? (statesSnap.data().states || {}) : {};
 
-        onSnapshot(doc(db, "system", "global_alerts"), (docSnap) => {
-          if (docSnap.exists() && docSnap.data().data) {
-            const liveAlerts = docSnap.data().data;
-            const liveMap = {};
-            liveAlerts.forEach(a => { liveMap[a.id] = a; });
+        // Merge: base alerts + saved state overrides
+        const merged = baseAlerts.map(a => ({
+          ...a,
+          ...(fbStates[a.id] || {}),
+        }));
+        setAlerts(merged);
+
+        // Set up real-time listener for cross-browser sync (lightweight states only)
+        if (snapshotUnsub.current) snapshotUnsub.current();
+        snapshotUnsub.current = onSnapshot(doc(db, "system", "alert_states"), (docSnap) => {
+          if (isWriting.current) return; // Skip our own writes
+
+          if (docSnap.exists() && docSnap.data().states) {
+            const liveStates = docSnap.data().states;
 
             setAlerts(prev => {
-              if (prev.length === 0) return liveAlerts;
-
-              const merged = prev.map(a => ({ ...a, ...(liveMap[a.id] || {}) }));
-
-              // Also add any NEW alerts from Firebase that aren't in local state yet
-              const localIds = new Set(prev.map(a => a.id));
-              const missingLocals = liveAlerts.filter(a => !localIds.has(a.id));
-
-              return [...merged, ...missingLocals];
+              if (prev.length === 0) return prev;
+              return prev.map(a => ({
+                ...a,
+                ...(liveStates[a.id] || {}),
+              }));
             });
           }
         });
@@ -85,8 +121,12 @@ export default function App() {
     setLoading(false);
   };
 
-  useEffect(() => { fetchAlerts(); }, []);
+  useEffect(() => {
+    fetchAlerts();
+    return () => { if (snapshotUnsub.current) snapshotUnsub.current(); };
+  }, []);
 
+  // Auth state listener
   useEffect(() => {
     let unsubscribeSnap = null;
     const unsubscribeAuth = onAuthStateChanged(auth, (firebaseUser) => {
