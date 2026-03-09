@@ -26,33 +26,57 @@ export default function App() {
   });
 
   const [loading, setLoading] = useState(alerts.length === 0);
+  const syncTimer = useRef(null);
 
-  // ── Persist to localStorage on every change (instant, no Firebase needed) ──
+  // Helper: extract mutable state fields
+  const extractStates = (alertsArr) => {
+    const states = {};
+    alertsArr.forEach(a => {
+      if (a.status !== "New" || a.assignedTo || (a.notes && a.notes.length > 0)) {
+        states[a.id] = {
+          status: a.status,
+          assignedTo: a.assignedTo || null,
+          priority: a.priority,
+          notes: a.notes || [],
+        };
+      }
+    });
+    return states;
+  };
+
+  // ── Save to localStorage + sync to backend (debounced) ──
   useEffect(() => {
     localStorage.setItem("rld_alerts", JSON.stringify(alerts));
+
+    // Debounced sync to backend (waits 500ms after last change)
+    if (syncTimer.current) clearTimeout(syncTimer.current);
+    syncTimer.current = setTimeout(() => {
+      if (alerts.length > 0) {
+        const states = extractStates(alerts);
+        fetch(`${API_URL}/states`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(states),
+        }).catch(() => { }); // Silently fail if backend unreachable
+      }
+    }, 500);
   }, [alerts]);
 
-  useEffect(() => {
-    localStorage.setItem("rld_notifs", JSON.stringify(notifs));
-  }, [notifs]);
+  useEffect(() => { localStorage.setItem("rld_notifs", JSON.stringify(notifs)); }, [notifs]);
 
-  // ── Staff list from Firestore (minimal reads — uses cache when quota exceeded) ──
+  // ── Staff list from Firestore ──
   useEffect(() => {
     try {
       const unsubStaff = onSnapshot(collection(db, "users"), (snapshot) => {
         const usersList = [];
         snapshot.forEach(d => usersList.push({ id: d.id, ...d.data() }));
         setStaffList(usersList);
-      }, (err) => {
-        console.warn("Firestore staff list unavailable:", err.message);
-      });
+      }, () => { });
       return () => unsubStaff();
-    } catch (e) {
-      console.warn("Firestore connection failed:", e.message);
-    }
+    } catch (e) { }
   }, []);
 
-  // ── Fetch base alerts from Python API + merge with localStorage states ──
+  // ── Fetch alerts from API + merge with saved states ──
   const fetchAlerts = async () => {
     try {
       const res = await fetch(`${API_URL}/alerts`);
@@ -61,37 +85,43 @@ export default function App() {
       if (Array.isArray(data)) {
         const baseAlerts = transformAlerts(data);
 
-        // Read saved states from localStorage (works offline, no Firebase needed)
+        // Source 1: localStorage (instant, same browser)
         const localSaved = localStorage.getItem("rld_alerts");
         const localAlerts = localSaved ? JSON.parse(localSaved) : [];
         const localMap = {};
         localAlerts.forEach(a => {
           if (a.status !== "New" || a.assignedTo) {
-            localMap[a.id] = {
-              status: a.status,
-              assignedTo: a.assignedTo,
-              priority: a.priority,
-              notes: a.notes || [],
-            };
+            localMap[a.id] = { status: a.status, assignedTo: a.assignedTo, priority: a.priority, notes: a.notes || [] };
           }
         });
 
-        // Merge: base alert data from API + saved states from localStorage
+        // Source 2: Backend API (cross-device sync)
+        let serverStates = {};
+        try {
+          const stRes = await fetch(`${API_URL}/states`);
+          serverStates = await stRes.json();
+        } catch (e) { }
+
+        // Merge: base data + localStorage + server (server wins for cross-device)
         const merged = baseAlerts.map(a => ({
           ...a,
           ...(localMap[a.id] || {}),
+          ...(serverStates[a.id] || {}),
         }));
         setAlerts(merged);
       }
-    } catch (e) {
-      console.error("Failed to fetch alerts:", e);
-    }
+    } catch (e) { console.error("Failed to fetch alerts:", e); }
     setLoading(false);
   };
 
-  useEffect(() => { fetchAlerts(); }, []);
+  // Fetch on mount + poll every 5 seconds for cross-device updates
+  useEffect(() => {
+    fetchAlerts();
+    const poll = setInterval(fetchAlerts, 5000);
+    return () => clearInterval(poll);
+  }, []);
 
-  // ── Auth state listener ──
+  // ── Auth ──
   useEffect(() => {
     let unsubscribeSnap = null;
     const unsubscribeAuth = onAuthStateChanged(auth, (firebaseUser) => {
@@ -104,9 +134,7 @@ export default function App() {
             setUser(null);
           }
           setAuthChecked(true);
-        }, (error) => {
-          console.warn("User doc read failed, using auth only:", error.message);
-          // Fallback: use Firebase Auth user info directly
+        }, () => {
           setUser({ id: firebaseUser.uid, name: firebaseUser.displayName || firebaseUser.email, email: firebaseUser.email, role: "Admin", status: "Approved", dept: "Administration" });
           setAuthChecked(true);
         });
@@ -123,7 +151,7 @@ export default function App() {
   }, []);
 
   const handleLogout = async () => {
-    try { await signOut(auth); } catch (e) { console.error(e); }
+    try { await signOut(auth); } catch (e) { }
     setUser(null);
   };
 

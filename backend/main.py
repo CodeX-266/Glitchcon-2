@@ -1,7 +1,8 @@
-from fastapi import FastAPI, UploadFile, File
+from fastapi import FastAPI, UploadFile, File, Request
 from fastapi.middleware.cors import CORSMiddleware
 import pandas as pd
 import os
+import json
 from ai_engine import run_detection
 
 app = FastAPI(title="AI Revenue Leakage Detection System")
@@ -19,6 +20,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 DATA_PATH = os.path.join(BASE_DIR, "..", "data", "hospital_billing_data.csv")
 ALERT_PATH = os.path.join(BASE_DIR, "detected_alerts.csv")
+STATES_PATH = os.path.join(BASE_DIR, "alert_states.json")
 
 
 # ---------------------------------------
@@ -100,6 +102,40 @@ def analytics():
         "issue_breakdown": issue_breakdown,
         "department_breakdown": dept_breakdown
     }
+
+
+# ---------------------------------------
+# Alert state sync (cross-device)
+# ---------------------------------------
+@app.get("/states")
+def get_states():
+    """Get saved alert states (assignments, status changes)."""
+    if not os.path.exists(STATES_PATH):
+        return {}
+    try:
+        with open(STATES_PATH, "r") as f:
+            return json.load(f)
+    except Exception:
+        return {}
+
+
+@app.post("/states")
+async def save_states(request: Request):
+    """Save alert states from any client."""
+    try:
+        body = await request.json()
+        # Merge with existing states (don't overwrite other fields)
+        existing = {}
+        if os.path.exists(STATES_PATH):
+            with open(STATES_PATH, "r") as f:
+                existing = json.load(f)
+        existing.update(body)
+        with open(STATES_PATH, "w") as f:
+            json.dump(existing, f)
+        return {"ok": True, "count": len(existing)}
+    except Exception as e:
+        return {"ok": False, "error": str(e)}
+
 
 if __name__ == "__main__":
     import uvicorn
