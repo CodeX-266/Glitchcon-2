@@ -1,4 +1,4 @@
-import { HBar } from "../../ui/Charts";
+import { HBar, TrendBar, Donut } from "../../ui/Charts";
 import { MONTHLY } from "../../../config/navigation";
 import { generateCSV, downloadCSV } from "../../../utils/csv";
 import { Download, BarChart3 } from "lucide-react";
@@ -49,6 +49,10 @@ export function FinanceDash({ alerts, csvAccess }) {
                             return <HBar key={type} label={type.split(" ").pop()} value={v} max={loss} color="var(--fin)" aside={`₹${(v / 1000).toFixed(0)}K`} />;
                         })}
                     </div>
+                </div>
+                <div className="card" style={{ gridColumn: "1/-1", background: "linear-gradient(180deg, rgba(251, 146, 60, 0.05) 0%, rgba(0,0,0,0) 100%)" }}>
+                    <div className="ct" style={{ borderBottom: "1px solid var(--border)", paddingBottom: 12, marginBottom: 16 }}>Revenue Lifecycle (6 mo Trend)</div>
+                    <TrendBar color="var(--fin)" data={MONTHLY.map(m => ({ l: m.month, v: m.collected }))} />
                 </div>
                 <div className="forecast" style={{ gridColumn: "1/-1", border: "1px solid var(--border)", borderRadius: "var(--radius)", padding: 24, display: "flex", justifyContent: "space-between", alignItems: "center", background: "url('data:image/svg+xml;utf8,<svg width=\"100\" height=\"100\" xmlns=\"http://www.w3.org/2000/svg\"><pattern id=\"grid\" width=\"20\" height=\"20\" patternUnits=\"userSpaceOnUse\"><path d=\"M 20 0 L 0 0 0 20\" fill=\"none\" stroke=\"rgba(255,255,255,0.02)\" stroke-width=\"1\"/></pattern><rect width=\"100\" height=\"100\" fill=\"url(%23grid)\"/></svg>')", backgroundSize: "40px 40px" }}>
                     <div>

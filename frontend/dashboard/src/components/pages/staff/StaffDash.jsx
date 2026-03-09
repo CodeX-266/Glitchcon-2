@@ -1,4 +1,5 @@
 import { Info, Inbox, DollarSign, FileText, CheckCircle, ShieldAlert, Activity, ClipboardList } from "lucide-react";
+import { Donut } from "../../ui/Charts";
 
 export function StaffDash({ currentUser, alerts }) {
     const mine = alerts.filter(a => a.assignedTo === currentUser.id);
@@ -131,29 +132,38 @@ export function StaffDash({ currentUser, alerts }) {
                             </div>
                         </div>
 
-                        <div className="card">
-                            <div className="ct" style={{ borderBottom: "1px solid var(--border)", paddingBottom: 12, marginBottom: 16 }}><FileText size={18} style={{ color: "var(--muted)", marginRight: 8 }} /> Latest Suggested Codes</div>
-                            <div className="tw" style={{ border: "none" }}>
-                                <table style={{ background: "transparent" }}>
-                                    <thead style={{ background: "rgba(0,0,0,0.2)" }}>
-                                        <tr>
-                                            <th>Task ID</th>
-                                            <th>Original</th>
-                                            <th>AI Suggestion</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {mine.slice(0, 4).map(a => (
-                                            <tr key={a.id} style={{ background: "transparent" }}>
-                                                <td style={{ fontWeight: 600, fontFamily: "var(--mono)", fontSize: 12 }}>{a.id}</td>
-                                                <td style={{ fontSize: 12, color: "var(--muted)" }}>{a.cpt_code || "MISSING"}</td>
-                                                <td style={{ fontWeight: 700, color: "var(--staff)", fontSize: 13, display: "flex", alignItems: "center", gap: 6 }}>
-                                                    {a.cptSuggested} <span style={{ fontSize: 10, background: "rgba(96, 165, 250, 0.15)", padding: "2px 6px", borderRadius: 4, color: "var(--staff)" }}>{a.cptConfidence}%</span>
-                                                </td>
+                        <div className="card" style={{ gridColumn: "1/-1", display: 'flex', gap: 24, alignItems: 'center' }}>
+                            <div style={{ flex: 1 }}>
+                                <div className="ct" style={{ marginBottom: 16 }}>Issue Distribution Breakdown</div>
+                                <Donut data={[
+                                    { name: 'Missing Codes', value: missingCodes, color: '#f59e0b' },
+                                    { name: 'Coding Inaccuracies', value: codeErrors, color: '#ef4444' }
+                                ]} />
+                            </div>
+                            <div style={{ flex: 1 }}>
+                                <div className="ct" style={{ borderBottom: "1px solid var(--border)", paddingBottom: 12, marginBottom: 16 }}><FileText size={18} style={{ color: "var(--muted)", marginRight: 8 }} /> Latest Suggested Codes</div>
+                                <div className="tw" style={{ border: "none" }}>
+                                    <table style={{ background: "transparent" }}>
+                                        <thead style={{ background: "rgba(0,0,0,0.2)" }}>
+                                            <tr>
+                                                <th>Task ID</th>
+                                                <th>Original</th>
+                                                <th>AI Suggestion</th>
                                             </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
+                                        </thead>
+                                        <tbody>
+                                            {mine.slice(0, 4).map(a => (
+                                                <tr key={a.id} style={{ background: "transparent" }}>
+                                                    <td style={{ fontWeight: 600, fontFamily: "var(--mono)", fontSize: 12 }}>{a.id}</td>
+                                                    <td style={{ fontSize: 12, color: "var(--muted)" }}>{a.cpt_code || "MISSING"}</td>
+                                                    <td style={{ fontWeight: 700, color: "var(--staff)", fontSize: 13, display: "flex", alignItems: "center", gap: 6 }}>
+                                                        {a.cptSuggested} <span style={{ fontSize: 10, background: "rgba(96, 165, 250, 0.15)", padding: "2px 6px", borderRadius: 4, color: "var(--staff)" }}>{a.cptConfidence}%</span>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -209,27 +219,36 @@ export function StaffDash({ currentUser, alerts }) {
                             </div>
                         </div>
 
-                        <div className="card">
-                            <div className="ct" style={{ borderBottom: "1px solid var(--border)", paddingBottom: 12, marginBottom: 16 }}><DollarSign size={18} style={{ color: "var(--warn)", marginRight: 8 }} /> High Impact Denials</div>
-                            <div className="tw" style={{ border: "none" }}>
-                                <table style={{ background: "transparent" }}>
-                                    <thead style={{ background: "rgba(0,0,0,0.2)" }}>
-                                        <tr>
-                                            <th>Insurance</th>
-                                            <th>Claim Action</th>
-                                            <th>Value</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {mine.filter(a => a.priority === "Critical" || a.priority === "High").slice(0, 4).map(a => (
-                                            <tr key={a.id} style={{ background: "transparent" }}>
-                                                <td style={{ fontWeight: 600, fontSize: 12 }}>{a.insurance}</td>
-                                                <td style={{ fontSize: 12, color: "var(--muted)" }}>{a.recommendation}</td>
-                                                <td style={{ fontWeight: 700, color: "var(--danger)", fontSize: 13 }}>₹{a.loss.toLocaleString()}</td>
+                        <div className="card" style={{ gridColumn: "1/-1", display: "flex", gap: 24, alignItems: "center" }}>
+                            <div style={{ flex: 1 }}>
+                                <div className="ct" style={{ marginBottom: 16 }}>Denial vs Unsubmitted Ratio</div>
+                                <Donut data={[
+                                    { name: 'Denied Claims', value: denied, color: '#ef4444' },
+                                    { name: 'Unsubmitted', value: unsubmitted, color: '#f59e0b' }
+                                ]} />
+                            </div>
+                            <div style={{ flex: 1 }}>
+                                <div className="ct" style={{ borderBottom: "1px solid var(--border)", paddingBottom: 12, marginBottom: 16 }}><DollarSign size={18} style={{ color: "var(--warn)", marginRight: 8 }} /> High Impact Denials</div>
+                                <div className="tw" style={{ border: "none" }}>
+                                    <table style={{ background: "transparent" }}>
+                                        <thead style={{ background: "rgba(0,0,0,0.2)" }}>
+                                            <tr>
+                                                <th>Insurance</th>
+                                                <th>Claim Action</th>
+                                                <th>Value</th>
                                             </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
+                                        </thead>
+                                        <tbody>
+                                            {mine.filter(a => a.priority === "Critical" || a.priority === "High").slice(0, 4).map(a => (
+                                                <tr key={a.id} style={{ background: "transparent" }}>
+                                                    <td style={{ fontWeight: 600, fontSize: 12 }}>{a.insurance}</td>
+                                                    <td style={{ fontSize: 12, color: "var(--muted)" }}>{a.recommendation}</td>
+                                                    <td style={{ fontWeight: 700, color: "var(--danger)", fontSize: 13 }}>₹{a.loss.toLocaleString()}</td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </div>
