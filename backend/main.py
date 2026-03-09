@@ -135,6 +135,16 @@ async def save_states(request: Request):
     except Exception as e:
         return {"ok": False, "error": str(e)}
 
+@app.delete("/states")
+def clear_states():
+    try:
+        if os.path.exists(STATES_PATH):
+            with open(STATES_PATH, "w") as f:
+                json.dump({}, f)
+        return {"ok": True}
+    except Exception as e:
+        return {"ok": False, "error": str(e)}
+
 
 # ---------------------------------------
 # User management (replaces Firestore)

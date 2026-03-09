@@ -39,7 +39,7 @@ export function AdminDash({ alerts, setAlerts, staffList, csvAccess, setCsvAcces
 
             // Step 3: Clear old states & refetch
             localStorage.removeItem("rld_alerts");
-            try { await fetch(`${API_URL}/states`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({}) }); } catch (e) { }
+            try { await fetch(`${API_URL}/states`, { method: "DELETE" }); } catch (e) { }
             if (fetchAlerts) await fetchAlerts();
 
             setUploadStatus("done");

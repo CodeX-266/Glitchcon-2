@@ -39,29 +39,29 @@ CPT_MAP = {
 }
 
 scenarios = [
-    # Clean record - 40%
-    {"weight": 40, "mod": lambda r: r},
+    # Clean record - 96%
+    {"weight": 96, "mod": lambda r: r},
     
-    # Missing Charge (Revenue) - 10%
-    {"weight": 10, "mod": lambda r: {**r, "charge_amount": 0, "insurance_paid": 0}},
+    # Missing Charge (Revenue) - 1%
+    {"weight": 1, "mod": lambda r: {**r, "charge_amount": 0, "insurance_paid": 0}},
     
-    # Claim Not Submitted (Claims) - 15%
-    {"weight": 15, "mod": lambda r: {**r, "claim_submitted": "No", "claim_status": "NA", "insurance_paid": 0}},
+    # Claim Not Submitted (Claims) - 1%
+    {"weight": 1, "mod": lambda r: {**r, "claim_submitted": "No", "claim_status": "NA", "insurance_paid": 0}},
     
-    # Denied Claim (Claims) - 15%
-    {"weight": 15, "mod": lambda r: {**r, "claim_status": "Denied", "insurance_paid": 0}},
+    # Denied Claim (Claims) - 1%
+    {"weight": 1, "mod": lambda r: {**r, "claim_status": "Denied", "insurance_paid": 0}},
     
-    # Underpayment (Revenue) - 10%
-    {"weight": 10, "mod": lambda r: {**r, "insurance_paid": int(r["charge_amount"] * random.uniform(0.3, 0.7))}},
+    # Underpayment (Revenue) - 0.5%
+    {"weight": 0.5, "mod": lambda r: {**r, "insurance_paid": int(r["charge_amount"] * random.uniform(0.3, 0.7))}},
     
-    # Coding Inconsistency (Coding) - 10%
-    {"weight": 10, "mod": lambda r: {**r, "cpt_code": str(int(r["cpt_code"]) + random.choice([1, -1, 10, -10]))}},
+    # Coding Inconsistency (Coding) - 0.5%
+    {"weight": 0.5, "mod": lambda r: {**r, "cpt_code": str(int(r["cpt_code"]) + random.choice([1, -1, 10, -10]))}},
 ]
 
 rows = []
 start_date = datetime.now() - timedelta(days=90)
 
-for i in range(1, 1001): # 1000 records
+for i in range(1, 5001): # 5000 records
     procedure = random.choice(list(CPT_MAP.keys()))
     cpt, charge, dept = CPT_MAP[procedure]
     
