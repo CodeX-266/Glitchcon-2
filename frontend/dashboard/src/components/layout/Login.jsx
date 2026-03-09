@@ -1,6 +1,8 @@
 import { useState } from "react";
-import { USERS_INIT } from "../../config/navigation";
 import { AlertTriangle } from "lucide-react";
+import { auth, db } from "../../config/firebase";
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 
 export function Login({ onLogin, staffList, setStaffList }) {
     const [tab, setTab] = useState("login");
@@ -8,42 +10,101 @@ export function Login({ onLogin, staffList, setStaffList }) {
     const [pass, setPass] = useState("");
     const [err, setErr] = useState("");
     const [ok, setOk] = useState("");
-    const [allUsers] = useState(USERS_INIT);
 
     const [rName, setRName] = useState("");
     const [rEmail, setREmail] = useState("");
     const [rPass, setRPass] = useState("");
     const [rDept, setRDept] = useState("Radiology");
 
-    const attempt = () => {
-        setErr("");
-        const u = allUsers.find(u => u.email === email && u.password === pass);
-        if (u) { onLogin(u); return; }
-        const s = staffList.find(s => s.email === email && s.password === pass);
-        if (s) {
-            if (s.status === "Pending") { setErr("Your account is pending admin approval."); return; }
-            onLogin({ ...s, dept: s.dept });
-            return;
+    const fetchUserRoleAndLogin = async (user) => {
+        try {
+            const docRef = doc(db, "users", user.uid);
+            const docSnap = await getDoc(docRef);
+            let userData = null;
+
+            if (docSnap.exists()) {
+                userData = docSnap.data();
+                if (userData.status === "Pending") {
+                    setErr("Your account is pending admin approval.");
+                    return;
+                }
+            } else {
+                // New Google user, create a default Staff document
+                userData = {
+                    id: user.uid,
+                    name: user.displayName || rName || "New User",
+                    email: user.email,
+                    role: "Staff", // Default role
+                    dept: rDept || "General",
+                    status: "Pending", // Require admin approval by default
+                    registered: new Date().toISOString().split("T")[0],
+                };
+                await setDoc(docRef, userData);
+
+                // Add to local state so Admin can see them
+                setStaffList(p => [...p, userData]);
+
+                setErr("New account created and pending admin approval.");
+                return;
+            }
+
+            onLogin({ ...userData, id: user.uid });
+        } catch (error) {
+            console.error("Error fetching user data:", error);
+            setErr("Failed to load user profile. Please try again.");
         }
-        setErr("Invalid credentials. Try a demo card below or register as staff.");
     };
 
-    const register = () => {
+    const attempt = async () => {
+        setErr("");
+        try {
+            const userCredential = await signInWithEmailAndPassword(auth, email, pass);
+            await fetchUserRoleAndLogin(userCredential.user);
+        } catch (error) {
+            console.error(error);
+            setErr("Invalid credentials. " + error.message);
+        }
+    };
+
+    const attemptGoogle = async () => {
+        setErr("");
+        const provider = new GoogleAuthProvider();
+        try {
+            const result = await signInWithPopup(auth, provider);
+            await fetchUserRoleAndLogin(result.user);
+        } catch (error) {
+            console.error(error);
+            setErr("Google sign-in failed. " + error.message);
+        }
+    };
+
+    const register = async () => {
         setErr("");
         if (!rName || !rEmail || !rPass) { setErr("All fields are required."); return; }
-        if (staffList.find(s => s.email === rEmail) || allUsers.find(u => u.email === rEmail)) { setErr("Email already registered."); return; }
-        const ns = { id: `s${Date.now()}`, name: rName, email: rEmail, password: rPass, role: "Staff", dept: rDept, status: "Pending", registered: new Date().toISOString().split("T")[0], assignedAlerts: [], completedAlerts: [] };
-        setStaffList(p => [...p, ns]);
-        setOk("Registration submitted! Waiting for admin approval.");
-        setRName(""); setREmail(""); setRPass(""); setTab("login");
-    };
+        try {
+            const userCredential = await createUserWithEmailAndPassword(auth, rEmail, rPass);
+            const user = userCredential.user;
 
-    const demoCards = [
-        { role: "Admin", email: "admin@hospital.com", password: "admin123", cls: "adm" },
-        { role: "RCM", email: "rcm@hospital.com", password: "rcm123", cls: "rcm" },
-        { role: "Finance", email: "finance@hospital.com", password: "finance123", cls: "fin" },
-        { role: "Staff", email: "priya@hospital.com", password: "priya123", cls: "stf" },
-    ];
+            const ns = {
+                id: user.uid,
+                name: rName,
+                email: rEmail,
+                role: "Staff",
+                dept: rDept,
+                status: "Pending",
+                registered: new Date().toISOString().split("T")[0],
+            };
+
+            await setDoc(doc(db, "users", user.uid), ns);
+            setStaffList(p => [...p, ns]);
+
+            setOk("Registration submitted! Waiting for admin approval.");
+            setRName(""); setREmail(""); setRPass(""); setTab("login");
+        } catch (error) {
+            console.error(error);
+            setErr("Registration failed. " + error.message);
+        }
+    };
 
     return (
         <div className="lp">
@@ -62,17 +123,15 @@ export function Login({ onLogin, staffList, setStaffList }) {
                         <>
                             <div className="lf"><label>Email</label><input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="you@hospital.com" onKeyDown={e => e.key === "Enter" && attempt()} /></div>
                             <div className="lf"><label>Password</label><input type="password" value={pass} onChange={e => setPass(e.target.value)} placeholder="••••••••" onKeyDown={e => e.key === "Enter" && attempt()} /></div>
-                            <button className="l-btn" onClick={attempt}>Access System</button>
-                            {err && <div className="l-err">{err}</div>}
-                            {ok && <div className="l-ok">{ok}</div>}
-                            <div className="role-cards">
-                                {demoCards.map(u => (
-                                    <div key={u.email} className="rc" onClick={() => { setEmail(u.email); setPass(u.password); setErr(""); setOk(""); }}>
-                                        <div className={`rc-role ${u.cls}`}>{u.role}</div>
-                                        <div className="rc-email">{u.email}</div>
-                                    </div>
-                                ))}
-                            </div>
+
+                            <button className="l-btn" onClick={attempt} style={{ marginBottom: 12 }}>Access System</button>
+                            <button className="l-btn" onClick={attemptGoogle} style={{ background: "white", color: "#333", border: "1px solid #ccc", display: "flex", justifyContent: "center", alignItems: "center", gap: 10 }}>
+                                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" style={{ width: 18 }} />
+                                Continue with Google
+                            </button>
+
+                            {err && <div className="l-err" style={{ marginTop: 12 }}>{err}</div>}
+                            {ok && <div className="l-ok" style={{ marginTop: 12 }}>{ok}</div>}
                         </>
                     )}
 
