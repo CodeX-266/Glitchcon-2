@@ -99,49 +99,20 @@ export default function App() {
     setLoading(false);
   };
 
-  // ── Fetch staff from API (fallback to Firestore) ──
-  const fetchUsers = async () => {
-    try {
-      const r = await fetch(`${API_URL}/users`);
-      const users = await r.json();
-      if (Array.isArray(users)) {
-        setStaffList(prev => {
-          // Basic merge to not accidentally remove local-only if there's sync lag
-          const idMap = new Map();
-          prev.forEach(u => idMap.set(u.id, u));
-          users.forEach(u => idMap.set(u.id, u));
-          return Array.from(idMap.values());
-        });
-      }
-    } catch (e) { }
-  };
-
   // Fetch on mount + poll every 5 seconds for cross-device updates
   useEffect(() => {
     fetchAlerts();
-    fetchUsers();
+    const poll = setInterval(fetchAlerts, 5000);
 
-    // Also try Firestore listener once for any offline synced data
+    // Staff List via Firestore realtime listener
     let unsubStaff = () => { };
     try {
       unsubStaff = onSnapshot(collection(db, "users"), (snapshot) => {
         const usersList = [];
         snapshot.forEach(d => usersList.push({ id: d.id, ...d.data() }));
-        if (usersList.length > 0) {
-          setStaffList(prev => {
-            const idMap = new Map();
-            prev.forEach(u => idMap.set(u.id, u));
-            usersList.forEach(u => idMap.set(u.id, u));
-            return Array.from(idMap.values());
-          });
-        }
+        setStaffList(usersList);
       }, () => { });
     } catch (e) { }
-
-    const poll = setInterval(() => {
-      fetchAlerts();
-      fetchUsers();
-    }, 5000);
 
     return () => {
       clearInterval(poll);

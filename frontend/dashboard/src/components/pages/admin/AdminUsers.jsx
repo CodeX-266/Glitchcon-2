@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { UserPlus, Check, X, Clock } from "lucide-react";
-import { API_URL } from "../../../config/api";
+import { db } from "../../../config/firebase";
+import { doc, updateDoc, deleteDoc, setDoc } from "firebase/firestore";
 import toast from "react-hot-toast";
 
 export function AdminUsers({ staffList, setStaffList, addNotif }) {
@@ -12,13 +13,8 @@ export function AdminUsers({ staffList, setStaffList, addNotif }) {
     const approve = async id => {
         const s = staffList.find(x => x.id === id);
         try {
-            // Update on backend
-            await fetch(`${API_URL}/users/${id}`, {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ status: "Approved" }),
-            });
-            // Update local state
+            await updateDoc(doc(db, "users", id), { status: "Approved" });
+
             setStaffList(p => p.map(x => x.id === id ? { ...x, status: "Approved" } : x));
             addNotif({ type: "staff_register", title: "Staff Approved", message: `${s?.name} now has system access`, time: "Just now" });
             toast.success(`${s?.name} approved!`, { style: { background: "var(--bg)", color: "var(--text)", border: "1px solid var(--ok)" } });
@@ -31,7 +27,8 @@ export function AdminUsers({ staffList, setStaffList, addNotif }) {
     const reject = async id => {
         const s = staffList.find(x => x.id === id);
         try {
-            await fetch(`${API_URL}/users/${id}`, { method: "DELETE" });
+            await deleteDoc(doc(db, "users", id));
+
             setStaffList(p => p.filter(x => x.id !== id));
             addNotif({ type: "staff_register", title: "Staff Removed", message: `${s?.name} was removed from the system`, time: "Just now" });
             toast.success("User removed.", { style: { background: "var(--bg)", color: "var(--text)", border: "1px solid var(--danger)" } });
@@ -51,11 +48,8 @@ export function AdminUsers({ staffList, setStaffList, addNotif }) {
             registered: new Date().toISOString().split("T")[0],
         };
         try {
-            await fetch(`${API_URL}/users`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(newUser),
-            });
+            await setDoc(doc(db, "users", newId), newUser);
+
             setStaffList(p => [...p, newUser]);
             setForm({ name: "", email: "", password: "", role: "Medical Coding", dept: "Radiology" });
             setShowForm(false);
