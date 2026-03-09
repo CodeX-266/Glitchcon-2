@@ -58,6 +58,7 @@ export default function App() {
 
         const fbMap = {};
         fbAlerts.forEach(a => { fbMap[a.id] = a; });
+        // Make sure to merge fbMap over baseAlerts to NOT LOSE ASSIGNED STATES
         setAlerts(baseAlerts.map(a => ({ ...a, ...(fbMap[a.id] || {}) })));
 
         onSnapshot(doc(db, "system", "global_alerts"), (docSnap) => {
@@ -65,11 +66,17 @@ export default function App() {
             const liveAlerts = docSnap.data().data;
             const liveMap = {};
             liveAlerts.forEach(a => { liveMap[a.id] = a; });
+
             setAlerts(prev => {
-              if (prev.length === 0) return prev;
-              const changed = prev.some(p => JSON.stringify(liveMap[p.id]) !== JSON.stringify(p));
-              if (!changed) return prev;
-              return prev.map(a => ({ ...a, ...(liveMap[a.id] || {}) }));
+              if (prev.length === 0) return liveAlerts;
+
+              const merged = prev.map(a => ({ ...a, ...(liveMap[a.id] || {}) }));
+
+              // Also add any NEW alerts from Firebase that aren't in local state yet
+              const localIds = new Set(prev.map(a => a.id));
+              const missingLocals = liveAlerts.filter(a => !localIds.has(a.id));
+
+              return [...merged, ...missingLocals];
             });
           }
         });

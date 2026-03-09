@@ -54,7 +54,7 @@ export function Shell({ user, onLogout, staffList, setStaffList, alerts, setAler
     const isStaffRole = ["Revenue Department", "Medical Coding", "Insurance Claims"].includes(user.role);
 
     const pages = {
-        dash: user.role === "Admin" ? <AdminDash alerts={alerts} staffList={staffList} csvAccess={csvAccess} setCsvAccess={setCsvAccess} /> :
+        dash: user.role === "Admin" ? <AdminDash alerts={alerts} setAlerts={setAlerts} staffList={staffList} csvAccess={csvAccess} setCsvAccess={setCsvAccess} addNotif={addNotif} /> :
             user.role === "RCM" ? <RCMDash alerts={alerts} csvAccess={csvAccess} /> :
                 user.role === "Finance" ? <FinanceDash alerts={alerts} csvAccess={csvAccess} /> :
                     isStaffRole ? <StaffDash currentUser={user} alerts={alerts} /> : null,
