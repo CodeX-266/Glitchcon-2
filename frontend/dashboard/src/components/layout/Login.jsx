@@ -23,18 +23,30 @@ export function Login({ onLogin, staffList, setStaffList }) {
             const docRef = doc(db, "users", user.uid);
             let userData = null;
 
+            // Try backend API first (always works)
             try {
-                const docSnap = await getDoc(docRef);
-                if (docSnap.exists()) {
-                    userData = docSnap.data();
+                const apiRes = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:8000"}/users`);
+                const allUsers = await apiRes.json();
+                if (Array.isArray(allUsers)) {
+                    userData = allUsers.find(u => u.id === user.uid) || null;
                 }
-            } catch (firestoreErr) {
-                console.warn("Firestore read failed (quota?), using fallback:", firestoreErr.message);
+            } catch (e) { }
+
+            // Fallback: try Firestore
+            if (!userData) {
+                try {
+                    const docSnap = await getDoc(docRef);
+                    if (docSnap.exists()) {
+                        userData = docSnap.data();
+                    }
+                } catch (firestoreErr) {
+                    console.warn("Firestore read failed:", firestoreErr.message);
+                }
             }
 
+            // Still no user found — create new one
             if (!userData) {
                 if (tab === "register" || tab === "login") {
-                    // For Google login on register tab, or when Firestore is down
                     if (!rRole && tab === "register") {
                         setErr("Please select a role first.");
                         return;
@@ -48,12 +60,17 @@ export function Login({ onLogin, staffList, setStaffList }) {
                         status: rRole ? "Pending" : "Approved",
                         registered: new Date().toISOString().split("T")[0],
                     };
+                    // Save to backend API (always works)
                     try {
-                        await setDoc(docRef, userData);
-                        setStaffList(p => [...p, userData]);
-                    } catch (writeErr) {
-                        console.warn("Firestore write failed, continuing with local data");
-                    }
+                        await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:8000"}/users`, {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify(userData),
+                        });
+                    } catch (e) { }
+                    // Also try Firestore (may fail)
+                    try { await setDoc(docRef, userData); } catch (e) { }
+                    setStaffList(p => [...p, userData]);
                 }
             }
 
@@ -67,6 +84,7 @@ export function Login({ onLogin, staffList, setStaffList }) {
             setErr("Login failed. Please try again.");
         }
     };
+
 
     const attempt = async () => {
         setErr("");
@@ -120,8 +138,26 @@ export function Login({ onLogin, staffList, setStaffList }) {
                 registered: new Date().toISOString().split("T")[0],
             };
 
-            await setDoc(doc(db, "users", user.uid), ns);
-            setStaffList(p => [...p, ns]);
+            // Save to Backend API
+            try {
+                await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:8000"}/users`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(ns),
+                });
+            } catch (e) {
+                console.warn("Backend save failed:", e);
+            }
+
+            // Also try Firestore (may fail due to quota, that's okay)
+            try { await setDoc(doc(db, "users", user.uid), ns); } catch (e) { }
+
+            setStaffList(p => {
+                // Prevent duplicates in staff list
+                const exists = p.find(x => x.id === ns.id);
+                if (exists) return p;
+                return [...p, ns];
+            });
 
             setOk("Registration successful!");
             setRName(""); setREmail(""); setRPass(""); setTab("login");

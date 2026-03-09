@@ -103,13 +103,14 @@ def analytics():
         "department_breakdown": dept_breakdown
     }
 
+USERS_PATH = os.path.join(BASE_DIR, "users.json")
+
 
 # ---------------------------------------
 # Alert state sync (cross-device)
 # ---------------------------------------
 @app.get("/states")
 def get_states():
-    """Get saved alert states (assignments, status changes)."""
     if not os.path.exists(STATES_PATH):
         return {}
     try:
@@ -121,10 +122,8 @@ def get_states():
 
 @app.post("/states")
 async def save_states(request: Request):
-    """Save alert states from any client."""
     try:
         body = await request.json()
-        # Merge with existing states (don't overwrite other fields)
         existing = {}
         if os.path.exists(STATES_PATH):
             with open(STATES_PATH, "r") as f:
@@ -133,6 +132,76 @@ async def save_states(request: Request):
         with open(STATES_PATH, "w") as f:
             json.dump(existing, f)
         return {"ok": True, "count": len(existing)}
+    except Exception as e:
+        return {"ok": False, "error": str(e)}
+
+
+# ---------------------------------------
+# User management (replaces Firestore)
+# ---------------------------------------
+def _load_users():
+    if not os.path.exists(USERS_PATH):
+        return {}
+    try:
+        with open(USERS_PATH, "r") as f:
+            return json.load(f)
+    except Exception:
+        return {}
+
+
+def _save_users(users):
+    with open(USERS_PATH, "w") as f:
+        json.dump(users, f, indent=2)
+
+
+@app.get("/users")
+def get_users():
+    """Get all registered users."""
+    users = _load_users()
+    return list(users.values())
+
+
+@app.post("/users")
+async def create_user(request: Request):
+    """Register or update a user."""
+    try:
+        user = await request.json()
+        uid = user.get("id")
+        if not uid:
+            return {"ok": False, "error": "Missing user id"}
+        users = _load_users()
+        users[uid] = user
+        _save_users(users)
+        return {"ok": True, "user": user}
+    except Exception as e:
+        return {"ok": False, "error": str(e)}
+
+
+@app.put("/users/{uid}")
+async def update_user(uid: str, request: Request):
+    """Update a user's fields (e.g. status: Approved)."""
+    try:
+        updates = await request.json()
+        users = _load_users()
+        if uid in users:
+            users[uid].update(updates)
+            _save_users(users)
+            return {"ok": True, "user": users[uid]}
+        return {"ok": False, "error": "User not found"}
+    except Exception as e:
+        return {"ok": False, "error": str(e)}
+
+
+@app.delete("/users/{uid}")
+def delete_user(uid: str):
+    """Remove a user."""
+    try:
+        users = _load_users()
+        if uid in users:
+            removed = users.pop(uid)
+            _save_users(users)
+            return {"ok": True, "removed": removed}
+        return {"ok": False, "error": "User not found"}
     except Exception as e:
         return {"ok": False, "error": str(e)}
 
