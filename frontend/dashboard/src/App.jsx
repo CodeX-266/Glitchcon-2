@@ -50,7 +50,7 @@ export default function App() {
     return states;
   };
 
-  // Persist alerts to localStorage always; sync ONLY state diffs to Firebase
+  // Persist alerts to localStorage always; try Firebase sync (but don't break if quota exceeded)
   useEffect(() => {
     localStorage.setItem("rld_alerts", JSON.stringify(alerts));
     if (alerts.length > 0) {
@@ -60,8 +60,8 @@ export default function App() {
         .then(() => {
           setTimeout(() => { isWriting.current = false; }, 500);
         })
-        .catch((e) => {
-          console.error("Firebase sync error:", e);
+        .catch(() => {
+          // Firebase quota exceeded or offline — localStorage already saved, so app still works
           isWriting.current = false;
         });
     }
@@ -79,7 +79,7 @@ export default function App() {
     return () => unsubStaff();
   }, []);
 
-  // Fetch alerts from Python API + merge with Firebase saved states
+  // Fetch alerts from Python API + merge with saved states
   const fetchAlerts = async () => {
     try {
       const res = await fetch(`${API_URL}/alerts`);
@@ -88,34 +88,49 @@ export default function App() {
       if (Array.isArray(data)) {
         const baseAlerts = transformAlerts(data);
 
-        // Get saved states from Firebase (lightweight state map)
-        const statesSnap = await getDoc(doc(db, "system", "alert_states"));
-        const fbStates = statesSnap.exists() ? (statesSnap.data().states || {}) : {};
+        // Source 1: localStorage (same browser, always available)
+        const localSaved = localStorage.getItem("rld_alerts");
+        const localAlerts = localSaved ? JSON.parse(localSaved) : [];
+        const localMap = {};
+        localAlerts.forEach(a => {
+          if (a.status !== "New" || a.assignedTo) {
+            localMap[a.id] = { status: a.status, assignedTo: a.assignedTo, priority: a.priority, notes: a.notes || [] };
+          }
+        });
 
-        // Merge: base alerts + saved state overrides
+        // Source 2: Firebase (cross-browser, may fail if quota exceeded)
+        let fbStates = {};
+        try {
+          const statesSnap = await getDoc(doc(db, "system", "alert_states"));
+          fbStates = statesSnap.exists() ? (statesSnap.data().states || {}) : {};
+        } catch (fbErr) {
+          console.warn("Firebase read failed (quota?), using localStorage only:", fbErr.message);
+        }
+
+        // Merge: base data + localStorage + Firebase (most recent wins)
         const merged = baseAlerts.map(a => ({
           ...a,
+          ...(localMap[a.id] || {}),
           ...(fbStates[a.id] || {}),
         }));
         setAlerts(merged);
 
-        // Set up real-time listener for cross-browser sync (lightweight states only)
-        if (snapshotUnsub.current) snapshotUnsub.current();
-        snapshotUnsub.current = onSnapshot(doc(db, "system", "alert_states"), (docSnap) => {
-          if (isWriting.current) return; // Skip our own writes
-
-          if (docSnap.exists() && docSnap.data().states) {
-            const liveStates = docSnap.data().states;
-
-            setAlerts(prev => {
-              if (prev.length === 0) return prev;
-              return prev.map(a => ({
-                ...a,
-                ...(liveStates[a.id] || {}),
-              }));
-            });
-          }
-        });
+        // Try setting up real-time listener (will silently fail if quota exceeded)
+        try {
+          if (snapshotUnsub.current) snapshotUnsub.current();
+          snapshotUnsub.current = onSnapshot(doc(db, "system", "alert_states"), (docSnap) => {
+            if (isWriting.current) return;
+            if (docSnap.exists() && docSnap.data().states) {
+              const liveStates = docSnap.data().states;
+              setAlerts(prev => {
+                if (prev.length === 0) return prev;
+                return prev.map(a => ({ ...a, ...(liveStates[a.id] || {}) }));
+              });
+            }
+          });
+        } catch (snapErr) {
+          console.warn("Firebase listener failed:", snapErr.message);
+        }
       }
     } catch (e) { console.error("Failed to fetch alerts:", e); }
     setLoading(false);

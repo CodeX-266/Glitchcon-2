@@ -28,6 +28,7 @@ export function Shell({ user, onLogout, staffList, setStaffList, alerts, setAler
     const [csvAccess, setCsvAccess] = useState({ RCM: false, Finance: false });
     const [page, setPage] = useState("dash");
     const prevMyTasks = useRef(0);
+    const prevWorkDone = useRef(0);
 
     const addNotif = n => setNotifs(p => [{ ...n, id: Date.now(), read: false }, ...p]);
     const clearNotifs = () => setNotifs([]);
@@ -41,6 +42,7 @@ export function Shell({ user, onLogout, staffList, setStaffList, alerts, setAler
     const bmap = { newAlerts, pendingStaff: pending, assigned, myTasks };
     const title = PAGE_TITLES[page]?.[user.role] || page;
 
+    // Toast for STAFF when new tasks are assigned
     useEffect(() => {
         if (myTasks > prevMyTasks.current && prevMyTasks.current !== 0) {
             toast.success("New task assigned to you by Admin!", {
@@ -50,6 +52,19 @@ export function Shell({ user, onLogout, staffList, setStaffList, alerts, setAler
         }
         prevMyTasks.current = myTasks;
     }, [myTasks]);
+
+    // Toast for ADMIN when staff marks tasks as done
+    useEffect(() => {
+        if (user.role === "Admin" && workDone > prevWorkDone.current && prevWorkDone.current !== 0) {
+            const newDone = workDone - prevWorkDone.current;
+            toast(`${newDone} task${newDone > 1 ? "s" : ""} marked as done — awaiting your verification!`, {
+                icon: "✅",
+                duration: 5000,
+                style: { fontFamily: "var(--font)", border: "1px solid var(--ok)", color: "var(--text)", fontWeight: 600, background: "var(--bg)" }
+            });
+        }
+        prevWorkDone.current = workDone;
+    }, [workDone]);
 
     const isStaffRole = ["Revenue Department", "Medical Coding", "Insurance Claims"].includes(user.role);
 
