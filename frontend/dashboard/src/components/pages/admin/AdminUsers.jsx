@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { UserPlus, Check, X, Clock } from "lucide-react";
-import { db } from "../../config/firebase";
+import { db } from "../../../config/firebase";
 import { doc, updateDoc, deleteDoc, setDoc } from "firebase/firestore";
 
 export function AdminUsers({ staffList, setStaffList, addNotif }) {
