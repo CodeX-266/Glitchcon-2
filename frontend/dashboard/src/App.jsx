@@ -3,7 +3,7 @@ import { API_URL } from "./config/api";
 import { transformAlerts } from "./utils/transforms";
 import { auth, db } from "./config/firebase";
 import { signOut, onAuthStateChanged } from "firebase/auth";
-import { doc, onSnapshot } from "firebase/firestore";
+import { doc, onSnapshot, collection } from "firebase/firestore";
 import { AlertTriangle, LogOut } from "lucide-react";
 
 import "./styles/theme.css";
@@ -15,10 +15,7 @@ export default function App() {
   const [user, setUser] = useState(null);
   const [authChecked, setAuthChecked] = useState(false);
 
-  const [staffList, setStaffList] = useState(() => {
-    const saved = localStorage.getItem("rld_staff");
-    return saved ? JSON.parse(saved) : STAFF_INIT;
-  });
+  const [staffList, setStaffList] = useState([]);
 
   const [alerts, setAlerts] = useState(() => {
     const saved = localStorage.getItem("rld_alerts");
@@ -32,9 +29,17 @@ export default function App() {
 
   const [loading, setLoading] = useState(alerts.length === 0);
 
-  useEffect(() => { localStorage.setItem("rld_staff", JSON.stringify(staffList)); }, [staffList]);
   useEffect(() => { localStorage.setItem("rld_alerts", JSON.stringify(alerts)); }, [alerts]);
   useEffect(() => { localStorage.setItem("rld_notifs", JSON.stringify(notifs)); }, [notifs]);
+
+  useEffect(() => {
+    const unsubStaff = onSnapshot(collection(db, "users"), (snapshot) => {
+      const usersList = [];
+      snapshot.forEach(doc => usersList.push({ id: doc.id, ...doc.data() }));
+      setStaffList(usersList);
+    });
+    return () => unsubStaff();
+  }, []);
 
   const fetchAlerts = async () => {
     try {

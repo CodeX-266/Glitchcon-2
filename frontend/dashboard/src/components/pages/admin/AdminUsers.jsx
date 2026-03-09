@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { UserPlus, Check, X, Clock } from "lucide-react";
+import { db } from "../../config/firebase";
+import { doc, updateDoc, deleteDoc, setDoc } from "firebase/firestore";
 
 export function AdminUsers({ staffList, setStaffList, addNotif }) {
     const pending = staffList.filter(s => s.status === "Pending");
@@ -7,21 +9,44 @@ export function AdminUsers({ staffList, setStaffList, addNotif }) {
     const [showForm, setShowForm] = useState(false);
     const [form, setForm] = useState({ name: "", email: "", password: "", dept: "Radiology" });
 
-    const approve = id => {
+    const approve = async id => {
         const s = staffList.find(x => x.id === id);
-        setStaffList(p => p.map(s => s.id === id ? { ...s, status: "Approved" } : s));
-        addNotif({ type: "staff_register", title: "Staff Approved", message: `${s?.name} now has system access`, time: "Just now" });
+        try {
+            await updateDoc(doc(db, "users", id), { status: "Approved" });
+            addNotif({ type: "staff_register", title: "Staff Approved", message: `${s?.name} now has system access`, time: "Just now" });
+        } catch (error) {
+            console.error("Error approving user:", error);
+        }
     };
-    const reject = id => {
+
+    const reject = async id => {
         const s = staffList.find(x => x.id === id);
-        setStaffList(p => p.filter(s => s.id !== id));
-        addNotif({ type: "staff_register", title: "Staff Rejected", message: `${s?.name}'s registration was rejected`, time: "Just now" });
+        try {
+            await deleteDoc(doc(db, "users", id));
+            addNotif({ type: "staff_register", title: "Staff Removed", message: `${s?.name} was removed from the system`, time: "Just now" });
+        } catch (error) {
+            console.error("Error rejecting user:", error);
+        }
     };
-    const add = () => {
+
+    const add = async () => {
         if (!form.name || !form.email || !form.password) return;
-        setStaffList(p => [...p, { ...form, id: `s${Date.now()}`, role: "Staff", status: "Approved", registered: new Date().toISOString().split("T")[0], assignedAlerts: [], completedAlerts: [] }]);
-        setForm({ name: "", email: "", password: "", dept: "Radiology" });
-        setShowForm(false);
+        const newId = `s${Date.now()}`;
+        try {
+            await setDoc(doc(db, "users", newId), {
+                id: newId,
+                ...form,
+                role: "Staff",
+                status: "Approved",
+                registered: new Date().toISOString().split("T")[0],
+                assignedAlerts: [],
+                completedAlerts: []
+            });
+            setForm({ name: "", email: "", password: "", dept: "Radiology" });
+            setShowForm(false);
+        } catch (error) {
+            console.error("Error adding user:", error);
+        }
     };
 
     return (
