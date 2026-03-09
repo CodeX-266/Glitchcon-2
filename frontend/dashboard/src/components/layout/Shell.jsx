@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
+import { Toaster, toast } from 'react-hot-toast';
 import { NAV, PAGE_TITLES } from "../../config/navigation";
 import { NotifBell } from "../ui/NotifBell";
 import { AdminDash } from "../pages/admin/AdminDash";
@@ -11,7 +12,7 @@ import { FinanceDash } from "../pages/finance/FinanceDash";
 import { FinanceReports } from "../pages/finance/FinanceReports";
 import { StaffDash } from "../pages/staff/StaffDash";
 import { StaffMyWork } from "../pages/staff/StaffMyWork";
-import { LayoutDashboard, AlertTriangle, Cpu, Users, Inbox, BarChart3, ClipboardList, LogOut, CheckCircle } from "lucide-react";
+import { LayoutDashboard, AlertTriangle, Cpu, Users, Inbox, BarChart3, ClipboardList, LogOut, CheckCircle, X } from "lucide-react";
 
 const ICON_MAP = {
     "dash": <LayoutDashboard size={16} />,
@@ -26,6 +27,7 @@ const ICON_MAP = {
 export function Shell({ user, onLogout, staffList, setStaffList, alerts, setAlerts, notifs, setNotifs, loading, fetchAlerts }) {
     const [csvAccess, setCsvAccess] = useState({ RCM: false, Finance: false });
     const [page, setPage] = useState("dash");
+    const prevMyTasks = useRef(0);
 
     const addNotif = n => setNotifs(p => [{ ...n, id: Date.now(), read: false }, ...p]);
     const clearNotifs = () => setNotifs([]);
@@ -39,11 +41,23 @@ export function Shell({ user, onLogout, staffList, setStaffList, alerts, setAler
     const bmap = { newAlerts, pendingStaff: pending, assigned, myTasks };
     const title = PAGE_TITLES[page]?.[user.role] || page;
 
+    useEffect(() => {
+        if (myTasks > prevMyTasks.current && prevMyTasks.current !== 0) {
+            toast.success("New task assigned to you by Admin!", {
+                icon: "🔔",
+                style: { fontFamily: "var(--font)", border: `1px solid ${nav.accent}`, color: "var(--text)", fontWeight: 600 }
+            });
+        }
+        prevMyTasks.current = myTasks;
+    }, [myTasks]);
+
+    const isStaffRole = ["Revenue Department", "Medical Coding", "Insurance Claims"].includes(user.role);
+
     const pages = {
         dash: user.role === "Admin" ? <AdminDash alerts={alerts} staffList={staffList} csvAccess={csvAccess} setCsvAccess={setCsvAccess} /> :
             user.role === "RCM" ? <RCMDash alerts={alerts} csvAccess={csvAccess} /> :
                 user.role === "Finance" ? <FinanceDash alerts={alerts} csvAccess={csvAccess} /> :
-                    <StaffDash currentUser={user} alerts={alerts} />,
+                    isStaffRole ? <StaffDash currentUser={user} alerts={alerts} /> : null,
         "alert-q": <AdminAlertQueue alerts={alerts} setAlerts={setAlerts} staffList={staffList} addNotif={addNotif} />,
         "ai": <AdminAI alerts={alerts} onRetrain={fetchAlerts} />,
         "users": <AdminUsers staffList={staffList} setStaffList={setStaffList} addNotif={addNotif} />,
@@ -91,7 +105,7 @@ export function Shell({ user, onLogout, staffList, setStaffList, alerts, setAler
                             {user.role === "Admin" && "System Control · Alert Assignment · Staff Management"}
                             {user.role === "RCM" && "Claim Investigation · Code Correction · Resubmission"}
                             {user.role === "Finance" && "Revenue Analytics · Forecasting · Reports"}
-                            {user.role === "Staff" && `${user.dept} Department · Billing & Claims Work`}
+                            {isStaffRole && `${user.role} Operations · Analytics · Processing`}
                         </div>
                     </div>
                     <div className="tb-right">
@@ -114,6 +128,7 @@ export function Shell({ user, onLogout, staffList, setStaffList, alerts, setAler
                     </div>
                 ) : pages[page] || <div className="page"><div className="empty">Page not found</div></div>}
             </div>
+            <Toaster position="bottom-right" />
         </div>
     );
 }

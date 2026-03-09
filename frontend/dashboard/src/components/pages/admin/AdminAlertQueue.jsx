@@ -76,7 +76,7 @@ export function AdminAlertQueue({ alerts, setAlerts, staffList, addNotif }) {
                             <div className="field"><label>Assign To Staff</label>
                                 <select className="sel" value={assignTo} onChange={e => setAt(e.target.value)}>
                                     <option value="">— Select Staff Member —</option>
-                                    {approved.map(s => <option key={s.id} value={s.id}>{s.name} · {s.dept}</option>)}
+                                    {approved.map(s => <option key={s.id} value={s.id}>{s.name} · {s.role}</option>)}
                                 </select>
                             </div>
                             <div className="field"><label>Priority</label>

@@ -7,7 +7,7 @@ export function StaffDash({ currentUser, alerts }) {
 
     return (
         <div className="page">
-            <div className="banner info"><Info size={14} /> Welcome, {currentUser.name}. You are logged in as Staff · {currentUser.dept} Department.</div>
+            <div className="banner info"><Info size={14} /> Welcome, {currentUser.name}. You are logged in as {currentUser.role} · {currentUser.dept} Department.</div>
             <div className="krow k4">
                 <div className="kpi ks"><div className="kpi-l">Assigned to Me</div><div className="kpi-v s">{mine.length}</div></div>
                 <div className="kpi ky"><div className="kpi-l">Open / Pending</div><div className="kpi-v y">{open}</div></div>

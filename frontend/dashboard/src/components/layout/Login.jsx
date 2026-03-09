@@ -14,6 +14,7 @@ export function Login({ onLogin, staffList, setStaffList }) {
     const [rName, setRName] = useState("");
     const [rEmail, setREmail] = useState("");
     const [rPass, setRPass] = useState("");
+    const [rRole, setRRole] = useState("Medical Coding");
     const [rDept, setRDept] = useState("Radiology");
 
     const fetchUserRoleAndLogin = async (user) => {
@@ -25,12 +26,15 @@ export function Login({ onLogin, staffList, setStaffList }) {
             if (docSnap.exists()) {
                 userData = docSnap.data();
             } else {
-                // New Google user, create a default Staff document
+                if (tab !== "register") {
+                    setErr("Please use the Staff Register tab first to select your role.");
+                    return;
+                }
                 userData = {
                     id: user.uid,
                     name: user.displayName || rName || "New User",
                     email: user.email,
-                    role: "Staff", // Default role
+                    role: rRole,
                     dept: rDept || "General",
                     status: "Pending", // Require admin approval by default
                     registered: new Date().toISOString().split("T")[0],
@@ -82,7 +86,7 @@ export function Login({ onLogin, staffList, setStaffList }) {
                 id: user.uid,
                 name: rName,
                 email: rEmail,
-                role: "Staff",
+                role: rRole,
                 dept: rDept,
                 status: "Pending",
                 registered: new Date().toISOString().split("T")[0],
@@ -135,6 +139,11 @@ export function Login({ onLogin, staffList, setStaffList }) {
                             <div className="lf"><label>Full Name</label><input value={rName} onChange={e => setRName(e.target.value)} placeholder="Dr. John Doe" /></div>
                             <div className="lf"><label>Email</label><input type="email" value={rEmail} onChange={e => setREmail(e.target.value)} placeholder="john@hospital.com" /></div>
                             <div className="lf"><label>Password</label><input type="password" value={rPass} onChange={e => setRPass(e.target.value)} placeholder="Choose a secure password" /></div>
+                            <div className="lf"><label>Role</label>
+                                <select className="sel" value={rRole} onChange={e => setRRole(e.target.value)}>
+                                    {["Revenue Department", "Medical Coding", "Insurance Claims"].map(r => <option key={r} value={r}>{r}</option>)}
+                                </select>
+                            </div>
                             <div className="lf"><label>Department</label>
                                 <select className="sel" value={rDept} onChange={e => setRDept(e.target.value)}>
                                     {["Radiology", "Surgery", "Lab", "Cardiology", "Gastro", "Neurology"].map(d => <option key={d}>{d}</option>)}

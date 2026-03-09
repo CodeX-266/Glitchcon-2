@@ -7,7 +7,7 @@ export function AdminUsers({ staffList, setStaffList, addNotif }) {
     const pending = staffList.filter(s => s.status === "Pending");
     const approved = staffList.filter(s => s.status === "Approved");
     const [showForm, setShowForm] = useState(false);
-    const [form, setForm] = useState({ name: "", email: "", password: "", dept: "Radiology" });
+    const [form, setForm] = useState({ name: "", email: "", password: "", role: "Medical Coding", dept: "Radiology" });
 
     const approve = async id => {
         const s = staffList.find(x => x.id === id);
@@ -36,13 +36,13 @@ export function AdminUsers({ staffList, setStaffList, addNotif }) {
             await setDoc(doc(db, "users", newId), {
                 id: newId,
                 ...form,
-                role: "Staff",
+                role: form.role,
                 status: "Approved",
                 registered: new Date().toISOString().split("T")[0],
                 assignedAlerts: [],
                 completedAlerts: []
             });
-            setForm({ name: "", email: "", password: "", dept: "Radiology" });
+            setForm({ name: "", email: "", password: "", role: "Medical Coding", dept: "Radiology" });
             setShowForm(false);
         } catch (error) {
             console.error("Error adding user:", error);
@@ -62,7 +62,7 @@ export function AdminUsers({ staffList, setStaffList, addNotif }) {
                             <div className="reg-av">{s.name.split(" ").map(n => n[0]).join("")}</div>
                             <div className="reg-body">
                                 <div className="reg-name">{s.name}</div>
-                                <div className="reg-meta">{s.email} · {s.dept} · Registered {s.registered}</div>
+                                <div className="reg-meta">{s.email} · {s.role} · Registered {s.registered}</div>
                             </div>
                             <div className="reg-actions">
                                 <button className="btn btn-sm btn-g" onClick={() => approve(s.id)}><Check size={12} /> Approve</button>
@@ -85,6 +85,11 @@ export function AdminUsers({ staffList, setStaffList, addNotif }) {
                         <div className="field"><label>Full Name</label><input className="tinput" style={{ minHeight: "unset", height: 36, resize: "none" }} value={form.name} onChange={e => setForm(p => ({ ...p, name: e.target.value }))} placeholder="Dr. John Doe" /></div>
                         <div className="field"><label>Email</label><input className="tinput" style={{ minHeight: "unset", height: 36, resize: "none" }} value={form.email} onChange={e => setForm(p => ({ ...p, email: e.target.value }))} placeholder="john@hospital.com" /></div>
                         <div className="field"><label>Password</label><input type="password" className="tinput" style={{ minHeight: "unset", height: 36, resize: "none" }} value={form.password} onChange={e => setForm(p => ({ ...p, password: e.target.value }))} placeholder="Set a password" /></div>
+                        <div className="field"><label>Role</label>
+                            <select className="sel" value={form.role} onChange={e => setForm(p => ({ ...p, role: e.target.value }))}>
+                                {["Revenue Department", "Medical Coding", "Insurance Claims"].map(r => <option key={r} value={r}>{r}</option>)}
+                            </select>
+                        </div>
                         <div className="field"><label>Department</label>
                             <select className="sel" value={form.dept} onChange={e => setForm(p => ({ ...p, dept: e.target.value }))}>
                                 {["Radiology", "Surgery", "Lab", "Cardiology", "Gastro", "Neurology"].map(d => <option key={d}>{d}</option>)}
@@ -97,13 +102,13 @@ export function AdminUsers({ staffList, setStaffList, addNotif }) {
 
             <div className="tw">
                 <table>
-                    <thead><tr><th>Name</th><th>Email</th><th>Department</th><th>Registered</th><th>Status</th><th>Actions</th></tr></thead>
+                    <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Registered</th><th>Status</th><th>Actions</th></tr></thead>
                     <tbody>
                         {approved.map(s => (
                             <tr key={s.id}>
                                 <td className="fw7">{s.name}</td>
                                 <td className="tm ts">{s.email}</td>
-                                <td>{s.dept}</td>
+                                <td>{s.role}</td>
                                 <td className="tm ts">{s.registered}</td>
                                 <td><span className="b bapp">Approved</span></td>
                                 <td><button className="btn btn-sm btn-r" onClick={() => reject(s.id)}>Remove</button></td>

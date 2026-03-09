@@ -5,10 +5,10 @@ export const USERS_INIT = [
 ];
 
 export const STAFF_INIT = [
-    { id: "s1", name: "Priya Nair", email: "priya@hospital.com", password: "priya123", role: "Staff", dept: "Surgery", status: "Approved", registered: "2024-01-05", assignedAlerts: [], completedAlerts: [] },
-    { id: "s2", name: "Arun Mehta", email: "arun@hospital.com", password: "arun123", role: "Staff", dept: "Radiology", status: "Pending", registered: "2024-02-14", assignedAlerts: [], completedAlerts: [] },
-    { id: "s3", name: "Deepa Joshi", email: "deepa@hospital.com", password: "deepa123", role: "Staff", dept: "Lab", status: "Pending", registered: "2024-02-20", assignedAlerts: [], completedAlerts: [] },
-    { id: "s4", name: "Meena Pillai", email: "meena@hospital.com", password: "meena123", role: "Staff", dept: "Cardiology", status: "Approved", registered: "2024-01-10", assignedAlerts: [], completedAlerts: [] },
+    { id: "s1", name: "Priya Nair", email: "priya@hospital.com", password: "priya123", role: "Revenue Department", dept: "Surgery", status: "Approved", registered: "2024-01-05", assignedAlerts: [], completedAlerts: [] },
+    { id: "s2", name: "Arun Mehta", email: "arun@hospital.com", password: "arun123", role: "Medical Coding", dept: "Radiology", status: "Pending", registered: "2024-02-14", assignedAlerts: [], completedAlerts: [] },
+    { id: "s3", name: "Deepa Joshi", email: "deepa@hospital.com", password: "deepa123", role: "Medical Coding", dept: "Lab", status: "Pending", registered: "2024-02-20", assignedAlerts: [], completedAlerts: [] },
+    { id: "s4", name: "Meena Pillai", email: "meena@hospital.com", password: "meena123", role: "Insurance Claims", dept: "Cardiology", status: "Approved", registered: "2024-01-10", assignedAlerts: [], completedAlerts: [] },
 ];
 
 export const MONTHLY = [
@@ -68,10 +68,32 @@ export const NAV = {
             },
         ],
     },
-    Staff: {
+    "Revenue Department": {
+        accent: "var(--rcm)", cls: "rcm",
+        sections: [
+            { label: "Overview", items: [{ id: "dash", label: "Revenue Dashboard" }] },
+            {
+                label: "My Work", items: [
+                    { id: "work", label: "My Tasks", badge: "myTasks" },
+                ]
+            },
+        ],
+    },
+    "Medical Coding": {
         accent: "var(--staff)", cls: "stf",
         sections: [
-            { label: "Overview", items: [{ id: "dash", label: "My Dashboard" }] },
+            { label: "Overview", items: [{ id: "dash", label: "Coding Dashboard" }] },
+            {
+                label: "My Work", items: [
+                    { id: "work", label: "My Tasks", badge: "myTasks" },
+                ]
+            },
+        ],
+    },
+    "Insurance Claims": {
+        accent: "var(--fin)", cls: "fin",
+        sections: [
+            { label: "Overview", items: [{ id: "dash", label: "Claims Dashboard" }] },
             {
                 label: "My Work", items: [
                     { id: "work", label: "My Tasks", badge: "myTasks" },
@@ -82,11 +104,11 @@ export const NAV = {
 };
 
 export const PAGE_TITLES = {
-    dash: { Admin: "System Dashboard", RCM: "RCM Dashboard", Finance: "Revenue Overview", Staff: "My Dashboard" },
+    dash: { Admin: "System Dashboard", RCM: "RCM Dashboard", Finance: "Revenue Overview", "Revenue Department": "Revenue Work Dashboard", "Medical Coding": "Medical Coding Dashboard", "Insurance Claims": "Insurance Claims Dashboard" },
     "alert-q": { Admin: "Alert Queue" },
     ai: { Admin: "AI Engine Control" },
     users: { Admin: "User Management" },
     inbox: { RCM: "Alert Inbox" },
     reports: { Finance: "Reports & Export" },
-    work: { Staff: "My Assigned Tasks" },
+    work: { "Revenue Department": "Revenue Tasks", "Medical Coding": "Coding Tasks", "Insurance Claims": "Claims Tasks" },
 };
