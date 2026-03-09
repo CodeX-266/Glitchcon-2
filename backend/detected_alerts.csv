@@ -1,29 +1,642 @@
 alert_id,patient_id,procedure,department,charge_amount,insurance_paid,issue,loss,date
-A001,P102,Blood Panel,Lab,0.0,2000.0,Missing Charge,3166.67,2024-01-02
-A002,P103,CT Abdomen,Radiology,15000.0,0.0,Claim Not Submitted,15000.0,2024-01-03
-A003,P104,Cardiac Echo,Cardiology,10000.0,0.0,Denied Claim,10000.0,2024-01-04
-A004,P105,Knee Surgery,Surgery,45000.0,32000.0,Underpayment,13000.0,2024-01-05
-A005,P107,Ultrasound,Radiology,8000.0,5000.0,Underpayment,3000.0,2024-01-07
-A006,P108,Sleep Study,Neurology,9000.0,0.0,Claim Not Submitted,9000.0,2024-01-08
-A007,P110,Thyroid Test,Lab,0.0,1200.0,Missing Charge,3166.67,2024-01-10
-A008,P111,Appendectomy,Surgery,35000.0,0.0,Denied Claim,35000.0,2024-01-11
-A009,P112,Angiography,Cardiology,28000.0,20000.0,Underpayment,8000.0,2024-01-12
-A010,P114,Glucose Test,Lab,0.0,600.0,Missing Charge,3166.67,2024-01-14
-A011,P115,Endoscopy,Gastro,16000.0,12000.0,Underpayment,4000.0,2024-01-15
-A012,P116,EEG,Neurology,9000.0,0.0,Claim Not Submitted,9000.0,2024-01-16
-A013,P118,Liver Panel,Lab,4000.0,3000.0,Underpayment,1000.0,2024-01-18
-A014,P119,Spine MRI,Radiology,22000.0,0.0,Denied Claim,22000.0,2024-01-19
-A015,P121,CT Chest,Radiology,15000.0,12000.0,Underpayment,3000.0,2024-01-21
-A016,P122,Blood Culture,Lab,0.0,1500.0,Missing Charge,3166.67,2024-01-22
-A017,P123,Angioplasty,Cardiology,55000.0,45000.0,Underpayment,10000.0,2024-01-23
-A018,P125,Upper GI Endoscopy,Gastro,14000.0,0.0,Denied Claim,14000.0,2024-01-25
-A019,P127,Abdominal Ultrasound,Radiology,7000.0,0.0,Claim Not Submitted,7000.0,2024-01-27
-A020,P128,Lipid Profile,Lab,3000.0,2000.0,Underpayment,1000.0,2024-01-28
-A021,P129,Pacemaker Implant,Cardiology,75000.0,60000.0,Underpayment,15000.0,2024-01-29
-A022,P131,Colonoscopy,Gastro,17000.0,15000.0,Underpayment,2000.0,2024-02-01
-A023,P133,Complete Blood Count,Lab,0.0,800.0,Missing Charge,3166.67,2024-02-03
-A024,P134,Angiogram,Cardiology,32000.0,0.0,Denied Claim,32000.0,2024-02-04
-A025,P135,Knee Replacement,Surgery,60000.0,48000.0,Underpayment,12000.0,2024-02-05
-A026,P137,EEG Monitoring,Neurology,10000.0,0.0,Claim Not Submitted,10000.0,2024-02-07
-A027,P138,Chest CT,Radiology,16000.0,14000.0,Underpayment,2000.0,2024-02-08
-A028,P140,Cardiac Catheterization,Cardiology,48000.0,38000.0,Underpayment,10000.0,2024-02-10
+A001,P1001,Ultrasound,Radiology,8500.0,3687.0,Underpayment,4813.0,2026-01-08
+A002,P1002,Gallbladder Surgery,Surgery,48000.0,0.0,Claim Not Submitted,48000.0,2026-02-19
+A003,P1004,Angiography,Cardiology,30000.0,0.0,Denied Claim,30000.0,2025-12-19
+A004,P1005,Appendectomy,Surgery,40000.0,0.0,Denied Claim,40000.0,2026-01-31
+A005,P1008,CT Brain,Radiology,16000.0,0.0,Denied Claim,16000.0,2025-12-24
+A006,P1011,MRI Brain,Radiology,22000.0,22000.0,Coding Inconsistency,6600.0,2026-01-11
+A007,P1015,Pacemaker Implant,Cardiology,0.0,0.0,Missing Charge,35968.15,2026-01-04
+A008,P1017,Colonoscopy,Gastro,19000.0,0.0,Denied Claim,19000.0,2026-03-02
+A009,P1022,Colonoscopy,Gastro,19000.0,0.0,Claim Not Submitted,19000.0,2026-01-22
+A010,P1023,Liver Panel,Lab,4500.0,0.0,Claim Not Submitted,4500.0,2025-12-31
+A011,P1025,Angioplasty,Cardiology,60000.0,0.0,Denied Claim,60000.0,2025-12-12
+A012,P1027,Angiography,Cardiology,30000.0,30000.0,Coding Inconsistency,9000.0,2026-02-18
+A013,P1029,Angiography,Cardiology,0.0,0.0,Missing Charge,35968.15,2026-02-06
+A014,P1030,Spine MRI,Radiology,24000.0,12188.0,Underpayment,11812.0,2025-12-21
+A015,P1032,Colonoscopy,Gastro,19000.0,0.0,Claim Not Submitted,19000.0,2026-03-03
+A016,P1033,EEG,Neurology,11000.0,0.0,Claim Not Submitted,11000.0,2026-02-25
+A017,P1034,CT Abdomen,Radiology,18000.0,0.0,Denied Claim,18000.0,2026-03-03
+A018,P1035,Nerve Conduction Study,Neurology,10500.0,0.0,Denied Claim,10500.0,2025-12-26
+A019,P1036,Hernia Repair,Surgery,35000.0,0.0,Denied Claim,35000.0,2025-12-14
+A020,P1038,Gallbladder Surgery,Surgery,48000.0,48000.0,AI Billing Anomaly,9600.0,2026-02-20
+A021,P1039,Nerve Conduction Study,Neurology,0.0,0.0,Missing Charge,10526.6,2026-01-02
+A022,P1040,MRI Brain,Radiology,22000.0,13269.0,Underpayment,8731.0,2026-02-13
+A023,P1041,Stress Test,Cardiology,0.0,0.0,Missing Charge,35968.15,2026-02-21
+A024,P1042,EEG,Neurology,0.0,0.0,Missing Charge,10526.6,2026-02-12
+A025,P1045,Glucose Test,Lab,1200.0,0.0,Denied Claim,1200.0,2025-12-14
+A026,P1047,MRI Brain,Radiology,22000.0,6853.0,Underpayment,15147.0,2025-12-24
+A027,P1048,EEG,Neurology,11000.0,0.0,Denied Claim,11000.0,2026-03-07
+A028,P1049,Sleep Study,Neurology,10000.0,0.0,Claim Not Submitted,10000.0,2026-01-08
+A029,P1052,Angioplasty,Cardiology,60000.0,60000.0,Coding Inconsistency,18000.0,2026-02-15
+A030,P1053,Abdominal Ultrasound,Radiology,7500.0,0.0,Claim Not Submitted,7500.0,2025-12-29
+A031,P1054,Endoscopy,Gastro,0.0,0.0,Missing Charge,17285.71,2026-01-16
+A032,P1055,CT Chest,Radiology,17000.0,17000.0,Coding Inconsistency,5100.0,2026-01-28
+A033,P1057,CT Brain,Radiology,16000.0,0.0,Claim Not Submitted,16000.0,2026-01-18
+A034,P1059,Blood Culture,Lab,2800.0,0.0,Claim Not Submitted,2800.0,2026-03-01
+A035,P1061,Ultrasound,Radiology,8500.0,0.0,Denied Claim,8500.0,2025-12-16
+A036,P1063,Gallbladder Surgery,Surgery,48000.0,48000.0,AI Billing Anomaly,9600.0,2026-02-09
+A037,P1064,CT Abdomen,Radiology,18000.0,18000.0,Coding Inconsistency,5400.0,2025-12-18
+A038,P1065,Endoscopy,Gastro,17000.0,17000.0,Coding Inconsistency,5100.0,2026-02-15
+A039,P1066,MRI Brain,Radiology,22000.0,22000.0,Coding Inconsistency,6600.0,2026-01-20
+A040,P1069,Nerve Conduction Study,Neurology,10500.0,0.0,Denied Claim,10500.0,2026-02-16
+A041,P1071,Liver Panel,Lab,0.0,0.0,Missing Charge,2702.86,2026-02-02
+A042,P1072,Cardiac Echo,Cardiology,12000.0,0.0,Denied Claim,12000.0,2026-02-15
+A043,P1073,Gallbladder Surgery,Surgery,48000.0,0.0,Claim Not Submitted,48000.0,2026-02-21
+A044,P1075,Cardiac Echo,Cardiology,12000.0,0.0,Denied Claim,12000.0,2025-12-29
+A045,P1076,MRI Brain,Radiology,22000.0,0.0,Claim Not Submitted,22000.0,2026-01-10
+A046,P1077,Nerve Conduction Study,Neurology,10500.0,7263.0,Underpayment,3237.0,2026-02-18
+A047,P1078,Appendectomy,Surgery,40000.0,40000.0,Coding Inconsistency,12000.0,2025-12-25
+A048,P1079,CT Brain,Radiology,16000.0,9658.0,Underpayment,6342.0,2025-12-18
+A049,P1080,Glucose Test,Lab,0.0,0.0,Missing Charge,2702.86,2026-02-21
+A050,P1082,Glucose Test,Lab,1200.0,0.0,Denied Claim,1200.0,2026-01-07
+A051,P1085,Gallbladder Surgery,Surgery,48000.0,0.0,Claim Not Submitted,48000.0,2026-01-03
+A052,P1086,Pacemaker Implant,Cardiology,80000.0,80000.0,AI Billing Anomaly,16000.0,2025-12-29
+A053,P1087,CT Chest,Radiology,17000.0,0.0,Denied Claim,17000.0,2026-02-10
+A054,P1088,EEG,Neurology,11000.0,0.0,Claim Not Submitted,11000.0,2026-02-27
+A055,P1089,Arthroscopy,Surgery,42000.0,0.0,Denied Claim,42000.0,2026-01-01
+A056,P1090,MRI Brain,Radiology,0.0,0.0,Missing Charge,14449.8,2026-02-14
+A057,P1091,Ultrasound,Radiology,8500.0,0.0,Denied Claim,8500.0,2025-12-25
+A058,P1092,Appendectomy,Surgery,40000.0,14474.0,Underpayment,25526.0,2026-03-01
+A059,P1093,CT Chest,Radiology,17000.0,0.0,Denied Claim,17000.0,2026-03-08
+A060,P1095,CT Chest,Radiology,0.0,0.0,Missing Charge,14449.8,2025-12-21
+A061,P1096,Spine MRI,Radiology,24000.0,24000.0,Coding Inconsistency,7200.0,2026-01-22
+A062,P1099,Ultrasound,Radiology,8500.0,0.0,Denied Claim,8500.0,2026-01-30
+A063,P1100,Hernia Repair,Surgery,0.0,0.0,Missing Charge,44953.95,2025-12-17
+A064,P1102,X-Ray Chest,Radiology,3500.0,2141.0,Underpayment,1359.0,2026-03-08
+A065,P1104,Angiography,Cardiology,30000.0,30000.0,AI Billing Anomaly,6000.0,2025-12-17
+A066,P1105,Pacemaker Implant,Cardiology,80000.0,80000.0,AI Billing Anomaly,16000.0,2026-02-09
+A067,P1106,Lipid Profile,Lab,3200.0,0.0,Claim Not Submitted,3200.0,2026-01-08
+A068,P1107,Nerve Conduction Study,Neurology,10500.0,0.0,Denied Claim,10500.0,2026-01-22
+A069,P1108,Colonoscopy,Gastro,19000.0,0.0,Claim Not Submitted,19000.0,2026-02-05
+A070,P1109,Upper GI Endoscopy,Gastro,15000.0,0.0,Claim Not Submitted,15000.0,2026-01-01
+A071,P1110,X-Ray Chest,Radiology,3500.0,1656.0,Underpayment,1844.0,2025-12-28
+A072,P1111,CT Chest,Radiology,17000.0,0.0,Claim Not Submitted,17000.0,2026-02-07
+A073,P1112,Abdominal Ultrasound,Radiology,0.0,0.0,Missing Charge,14449.8,2026-02-17
+A074,P1114,Gallbladder Surgery,Surgery,48000.0,0.0,Denied Claim,48000.0,2026-01-17
+A075,P1115,Spine MRI,Radiology,24000.0,0.0,Claim Not Submitted,24000.0,2026-01-05
+A076,P1116,Stress Test,Cardiology,13000.0,0.0,Denied Claim,13000.0,2026-03-01
+A077,P1118,Angiography,Cardiology,30000.0,0.0,Claim Not Submitted,30000.0,2026-01-22
+A078,P1119,Pacemaker Implant,Cardiology,80000.0,0.0,Denied Claim,80000.0,2026-02-17
+A079,P1121,Knee Surgery,Surgery,55000.0,0.0,Claim Not Submitted,55000.0,2025-12-27
+A080,P1122,Cardiac Echo,Cardiology,12000.0,4732.0,Underpayment,7268.0,2026-02-28
+A081,P1123,EEG,Neurology,11000.0,0.0,Claim Not Submitted,11000.0,2025-12-10
+A082,P1124,Angioplasty,Cardiology,60000.0,0.0,Denied Claim,60000.0,2026-01-03
+A083,P1126,Pacemaker Implant,Cardiology,80000.0,0.0,Claim Not Submitted,80000.0,2026-02-13
+A084,P1128,Blood Panel,Lab,2500.0,0.0,Claim Not Submitted,2500.0,2026-02-17
+A085,P1129,Angiography,Cardiology,30000.0,30000.0,Coding Inconsistency,9000.0,2025-12-10
+A086,P1130,Thyroid Test,Lab,1800.0,779.0,Underpayment,1021.0,2025-12-28
+A087,P1131,Nerve Conduction Study,Neurology,10500.0,10500.0,Coding Inconsistency,3150.0,2025-12-31
+A088,P1132,Pacemaker Implant,Cardiology,80000.0,80000.0,AI Billing Anomaly,16000.0,2026-02-08
+A089,P1134,Colonoscopy,Gastro,19000.0,0.0,Claim Not Submitted,19000.0,2026-01-21
+A090,P1135,Knee Surgery,Surgery,55000.0,0.0,Denied Claim,55000.0,2025-12-21
+A091,P1136,Knee Surgery,Surgery,55000.0,0.0,Denied Claim,55000.0,2026-01-11
+A092,P1138,Nerve Conduction Study,Neurology,10500.0,0.0,Denied Claim,10500.0,2026-02-28
+A093,P1139,Gallbladder Surgery,Surgery,48000.0,48000.0,AI Billing Anomaly,9600.0,2026-02-03
+A094,P1141,Endoscopy,Gastro,17000.0,0.0,Claim Not Submitted,17000.0,2026-01-31
+A095,P1142,CT Chest,Radiology,17000.0,9584.0,Underpayment,7416.0,2025-12-25
+A096,P1144,Lipid Profile,Lab,3200.0,1942.0,Underpayment,1258.0,2026-01-29
+A097,P1145,Angiography,Cardiology,0.0,0.0,Missing Charge,35968.15,2026-02-27
+A098,P1146,Cardiac Echo,Cardiology,12000.0,8315.0,Underpayment,3685.0,2025-12-25
+A099,P1148,Pacemaker Implant,Cardiology,80000.0,34149.0,Underpayment,45851.0,2026-01-14
+A100,P1150,Endoscopy,Gastro,17000.0,0.0,Claim Not Submitted,17000.0,2026-01-30
+A101,P1151,Gallbladder Surgery,Surgery,0.0,0.0,Missing Charge,44953.95,2025-12-28
+A102,P1154,Cardiac Echo,Cardiology,12000.0,7376.0,Underpayment,4624.0,2026-01-09
+A103,P1155,Angioplasty,Cardiology,0.0,0.0,Missing Charge,35968.15,2026-01-30
+A104,P1156,Sleep Study,Neurology,10000.0,6272.0,Underpayment,3728.0,2026-03-02
+A105,P1157,X-Ray Chest,Radiology,3500.0,0.0,Denied Claim,3500.0,2025-12-12
+A106,P1159,CT Chest,Radiology,17000.0,0.0,Claim Not Submitted,17000.0,2026-02-05
+A107,P1160,Appendectomy,Surgery,0.0,0.0,Missing Charge,44953.95,2025-12-21
+A108,P1162,Blood Culture,Lab,2800.0,1897.0,Underpayment,903.0,2026-02-12
+A109,P1166,MRI Brain,Radiology,22000.0,22000.0,Coding Inconsistency,6600.0,2026-02-20
+A110,P1167,Arthroscopy,Surgery,42000.0,0.0,Claim Not Submitted,42000.0,2026-01-01
+A111,P1169,Blood Culture,Lab,2800.0,0.0,Denied Claim,2800.0,2025-12-15
+A112,P1170,Angioplasty,Cardiology,60000.0,60000.0,AI Billing Anomaly,12000.0,2026-02-10
+A113,P1171,Spine MRI,Radiology,24000.0,0.0,Claim Not Submitted,24000.0,2026-01-13
+A114,P1172,Stress Test,Cardiology,13000.0,0.0,Denied Claim,13000.0,2026-02-18
+A115,P1173,Upper GI Endoscopy,Gastro,15000.0,0.0,Denied Claim,15000.0,2026-02-28
+A116,P1179,Ultrasound,Radiology,8500.0,0.0,Claim Not Submitted,8500.0,2026-02-25
+A117,P1181,Endoscopy,Gastro,17000.0,6695.0,Underpayment,10305.0,2026-02-07
+A118,P1182,Blood Culture,Lab,2800.0,0.0,Claim Not Submitted,2800.0,2026-01-05
+A119,P1183,Cardiac Echo,Cardiology,12000.0,0.0,Claim Not Submitted,12000.0,2025-12-18
+A120,P1185,Upper GI Endoscopy,Gastro,15000.0,7647.0,Underpayment,7353.0,2025-12-10
+A121,P1188,Blood Culture,Lab,2800.0,2800.0,Coding Inconsistency,840.0,2026-02-14
+A122,P1190,Spine MRI,Radiology,24000.0,0.0,Claim Not Submitted,24000.0,2026-01-07
+A123,P1191,EEG,Neurology,11000.0,0.0,Claim Not Submitted,11000.0,2026-02-20
+A124,P1192,CT Abdomen,Radiology,18000.0,7533.0,Underpayment,10467.0,2026-01-09
+A125,P1193,Thyroid Test,Lab,1800.0,0.0,Claim Not Submitted,1800.0,2026-01-04
+A126,P1194,Angiography,Cardiology,30000.0,30000.0,AI Billing Anomaly,6000.0,2026-01-29
+A127,P1195,Appendectomy,Surgery,40000.0,0.0,Claim Not Submitted,40000.0,2026-03-07
+A128,P1196,MRI Brain,Radiology,22000.0,0.0,Denied Claim,22000.0,2026-02-07
+A129,P1197,Glucose Test,Lab,0.0,0.0,Missing Charge,2702.86,2026-02-18
+A130,P1199,Spine MRI,Radiology,24000.0,24000.0,Coding Inconsistency,7200.0,2026-01-30
+A131,P1200,Upper GI Endoscopy,Gastro,15000.0,9123.0,Underpayment,5877.0,2025-12-11
+A132,P1201,Hernia Repair,Surgery,35000.0,22987.0,Underpayment,12013.0,2026-01-16
+A133,P1203,Glucose Test,Lab,1200.0,0.0,Denied Claim,1200.0,2025-12-11
+A134,P1204,Blood Panel,Lab,2500.0,0.0,Denied Claim,2500.0,2026-02-09
+A135,P1205,Glucose Test,Lab,1200.0,0.0,Claim Not Submitted,1200.0,2025-12-11
+A136,P1207,CT Chest,Radiology,17000.0,0.0,Denied Claim,17000.0,2025-12-24
+A137,P1208,Angiography,Cardiology,30000.0,30000.0,AI Billing Anomaly,6000.0,2026-01-06
+A138,P1210,Stress Test,Cardiology,13000.0,0.0,Claim Not Submitted,13000.0,2026-02-16
+A139,P1211,Appendectomy,Surgery,40000.0,40000.0,Coding Inconsistency,12000.0,2026-01-19
+A140,P1213,CT Abdomen,Radiology,18000.0,18000.0,Coding Inconsistency,5400.0,2025-12-10
+A141,P1214,Abdominal Ultrasound,Radiology,7500.0,4249.0,Underpayment,3251.0,2026-03-08
+A142,P1216,Glucose Test,Lab,1200.0,1200.0,Coding Inconsistency,360.0,2026-02-28
+A143,P1218,Pacemaker Implant,Cardiology,80000.0,0.0,Claim Not Submitted,80000.0,2025-12-12
+A144,P1220,Arthroscopy,Surgery,42000.0,13703.0,Underpayment,28297.0,2026-01-03
+A145,P1221,Blood Panel,Lab,2500.0,0.0,Denied Claim,2500.0,2026-02-11
+A146,P1222,Pacemaker Implant,Cardiology,80000.0,0.0,Claim Not Submitted,80000.0,2026-03-08
+A147,P1223,Appendectomy,Surgery,40000.0,0.0,Claim Not Submitted,40000.0,2026-02-15
+A148,P1224,Blood Culture,Lab,0.0,0.0,Missing Charge,2702.86,2026-02-14
+A149,P1226,Stress Test,Cardiology,13000.0,0.0,Denied Claim,13000.0,2026-03-04
+A150,P1227,Hernia Repair,Surgery,0.0,0.0,Missing Charge,44953.95,2026-02-27
+A151,P1229,Lipid Profile,Lab,0.0,0.0,Missing Charge,2702.86,2026-03-04
+A152,P1231,Lipid Profile,Lab,3200.0,0.0,Claim Not Submitted,3200.0,2026-02-15
+A153,P1232,Lipid Profile,Lab,3200.0,3200.0,Coding Inconsistency,960.0,2026-02-22
+A154,P1233,Gallbladder Surgery,Surgery,48000.0,48000.0,AI Billing Anomaly,9600.0,2026-01-28
+A155,P1235,Liver Panel,Lab,4500.0,0.0,Denied Claim,4500.0,2026-02-06
+A156,P1236,X-Ray Chest,Radiology,3500.0,0.0,Claim Not Submitted,3500.0,2025-12-18
+A157,P1238,Stress Test,Cardiology,13000.0,0.0,Denied Claim,13000.0,2026-01-09
+A158,P1239,Endoscopy,Gastro,17000.0,0.0,Denied Claim,17000.0,2026-02-05
+A159,P1240,Angiography,Cardiology,30000.0,30000.0,AI Billing Anomaly,6000.0,2025-12-13
+A160,P1241,Gallbladder Surgery,Surgery,48000.0,48000.0,AI Billing Anomaly,9600.0,2026-02-10
+A161,P1242,Blood Culture,Lab,2800.0,0.0,Denied Claim,2800.0,2026-01-03
+A162,P1243,Blood Panel,Lab,0.0,0.0,Missing Charge,2702.86,2026-01-04
+A163,P1244,Angiography,Cardiology,30000.0,0.0,Claim Not Submitted,30000.0,2026-02-11
+A164,P1245,Sleep Study,Neurology,10000.0,0.0,Denied Claim,10000.0,2025-12-15
+A165,P1246,EEG,Neurology,11000.0,0.0,Claim Not Submitted,11000.0,2026-02-18
+A166,P1249,Nerve Conduction Study,Neurology,10500.0,10500.0,Coding Inconsistency,3150.0,2026-01-02
+A167,P1251,MRI Brain,Radiology,22000.0,10301.0,Underpayment,11699.0,2026-02-26
+A168,P1252,Thyroid Test,Lab,1800.0,656.0,Underpayment,1144.0,2026-02-22
+A169,P1254,Glucose Test,Lab,1200.0,1200.0,Coding Inconsistency,360.0,2026-02-15
+A170,P1255,Glucose Test,Lab,1200.0,783.0,Underpayment,417.0,2026-01-26
+A171,P1257,Cardiac Echo,Cardiology,12000.0,0.0,Claim Not Submitted,12000.0,2025-12-31
+A172,P1259,Pacemaker Implant,Cardiology,80000.0,0.0,Claim Not Submitted,80000.0,2026-01-03
+A173,P1261,Blood Panel,Lab,2500.0,880.0,Underpayment,1620.0,2026-02-28
+A174,P1262,CT Chest,Radiology,17000.0,0.0,Denied Claim,17000.0,2025-12-24
+A175,P1263,CT Chest,Radiology,17000.0,0.0,Denied Claim,17000.0,2026-01-14
+A176,P1265,Appendectomy,Surgery,0.0,0.0,Missing Charge,44953.95,2025-12-29
+A177,P1266,Pacemaker Implant,Cardiology,80000.0,80000.0,AI Billing Anomaly,16000.0,2026-03-03
+A178,P1267,Cardiac Echo,Cardiology,0.0,0.0,Missing Charge,35968.15,2025-12-11
+A179,P1269,Ultrasound,Radiology,0.0,0.0,Missing Charge,14449.8,2026-03-09
+A180,P1274,CT Chest,Radiology,17000.0,0.0,Denied Claim,17000.0,2026-02-03
+A181,P1275,Blood Panel,Lab,2500.0,2500.0,Coding Inconsistency,750.0,2026-03-02
+A182,P1276,Upper GI Endoscopy,Gastro,15000.0,15000.0,Coding Inconsistency,4500.0,2025-12-28
+A183,P1277,Cardiac Echo,Cardiology,0.0,0.0,Missing Charge,35968.15,2025-12-11
+A184,P1278,EEG,Neurology,11000.0,0.0,Claim Not Submitted,11000.0,2026-01-08
+A185,P1279,Liver Panel,Lab,4500.0,0.0,Claim Not Submitted,4500.0,2025-12-29
+A186,P1280,Knee Surgery,Surgery,55000.0,0.0,Denied Claim,55000.0,2025-12-12
+A187,P1282,Blood Panel,Lab,2500.0,0.0,Claim Not Submitted,2500.0,2026-01-18
+A188,P1284,Hernia Repair,Surgery,35000.0,35000.0,Coding Inconsistency,10500.0,2026-01-25
+A189,P1285,Blood Culture,Lab,2800.0,0.0,Claim Not Submitted,2800.0,2026-01-19
+A190,P1286,Glucose Test,Lab,1200.0,424.0,Underpayment,776.0,2026-01-28
+A191,P1287,Blood Panel,Lab,2500.0,0.0,Claim Not Submitted,2500.0,2025-12-25
+A192,P1288,Angiography,Cardiology,30000.0,17131.0,Underpayment,12869.0,2025-12-25
+A193,P1289,CT Abdomen,Radiology,0.0,0.0,Missing Charge,14449.8,2026-01-22
+A194,P1294,Thyroid Test,Lab,1800.0,768.0,Underpayment,1032.0,2026-02-01
+A195,P1295,Knee Surgery,Surgery,55000.0,0.0,Denied Claim,55000.0,2025-12-21
+A196,P1296,X-Ray Chest,Radiology,3500.0,2146.0,Underpayment,1354.0,2025-12-21
+A197,P1298,Abdominal Ultrasound,Radiology,7500.0,0.0,Claim Not Submitted,7500.0,2026-01-26
+A198,P1303,CT Abdomen,Radiology,18000.0,0.0,Denied Claim,18000.0,2026-02-12
+A199,P1305,Nerve Conduction Study,Neurology,10500.0,5980.0,Underpayment,4520.0,2026-02-12
+A200,P1307,Glucose Test,Lab,0.0,0.0,Missing Charge,2702.86,2025-12-29
+A201,P1308,Pacemaker Implant,Cardiology,80000.0,0.0,Denied Claim,80000.0,2025-12-15
+A202,P1311,Liver Panel,Lab,4500.0,0.0,Claim Not Submitted,4500.0,2026-03-03
+A203,P1312,Abdominal Ultrasound,Radiology,0.0,0.0,Missing Charge,14449.8,2025-12-27
+A204,P1314,Sleep Study,Neurology,10000.0,0.0,Claim Not Submitted,10000.0,2025-12-28
+A205,P1318,Angiography,Cardiology,0.0,0.0,Missing Charge,35968.15,2026-01-26
+A206,P1321,Sleep Study,Neurology,10000.0,0.0,Claim Not Submitted,10000.0,2025-12-30
+A207,P1323,Thyroid Test,Lab,1800.0,0.0,Claim Not Submitted,1800.0,2026-01-02
+A208,P1325,Abdominal Ultrasound,Radiology,7500.0,0.0,Claim Not Submitted,7500.0,2026-02-19
+A209,P1326,Blood Culture,Lab,0.0,0.0,Missing Charge,2702.86,2025-12-29
+A210,P1327,Knee Surgery,Surgery,0.0,0.0,Missing Charge,44953.95,2026-01-26
+A211,P1330,CT Brain,Radiology,16000.0,9396.0,Underpayment,6604.0,2026-01-14
+A212,P1331,Gallbladder Surgery,Surgery,48000.0,31415.0,Underpayment,16585.0,2026-01-05
+A213,P1332,Abdominal Ultrasound,Radiology,7500.0,0.0,Claim Not Submitted,7500.0,2026-01-03
+A214,P1333,Ultrasound,Radiology,8500.0,5540.0,Underpayment,2960.0,2026-02-21
+A215,P1336,Hernia Repair,Surgery,35000.0,0.0,Denied Claim,35000.0,2026-01-12
+A216,P1337,Abdominal Ultrasound,Radiology,7500.0,4992.0,Underpayment,2508.0,2026-02-17
+A217,P1338,Hernia Repair,Surgery,35000.0,0.0,Denied Claim,35000.0,2026-01-31
+A218,P1339,Pacemaker Implant,Cardiology,80000.0,80000.0,AI Billing Anomaly,16000.0,2026-02-05
+A219,P1341,Stress Test,Cardiology,13000.0,5297.0,Underpayment,7703.0,2026-02-19
+A220,P1342,Lipid Profile,Lab,3200.0,0.0,Denied Claim,3200.0,2026-01-15
+A221,P1343,Knee Surgery,Surgery,55000.0,55000.0,Coding Inconsistency,16500.0,2026-02-01
+A222,P1344,Nerve Conduction Study,Neurology,10500.0,5954.0,Underpayment,4546.0,2026-01-03
+A223,P1345,MRI Brain,Radiology,22000.0,0.0,Claim Not Submitted,22000.0,2026-02-25
+A224,P1346,X-Ray Chest,Radiology,0.0,0.0,Missing Charge,14449.8,2026-02-06
+A225,P1347,Blood Panel,Lab,2500.0,0.0,Claim Not Submitted,2500.0,2026-01-08
+A226,P1348,Appendectomy,Surgery,0.0,0.0,Missing Charge,44953.95,2025-12-24
+A227,P1349,X-Ray Chest,Radiology,3500.0,1502.0,Underpayment,1998.0,2026-01-17
+A228,P1354,Gallbladder Surgery,Surgery,0.0,0.0,Missing Charge,44953.95,2025-12-12
+A229,P1355,Angioplasty,Cardiology,60000.0,60000.0,AI Billing Anomaly,12000.0,2026-03-02
+A230,P1360,Angioplasty,Cardiology,60000.0,60000.0,AI Billing Anomaly,12000.0,2026-02-14
+A231,P1361,Cardiac Echo,Cardiology,12000.0,0.0,Claim Not Submitted,12000.0,2026-01-09
+A232,P1362,Pacemaker Implant,Cardiology,80000.0,0.0,Claim Not Submitted,80000.0,2026-01-09
+A233,P1363,Colonoscopy,Gastro,19000.0,0.0,Denied Claim,19000.0,2026-02-01
+A234,P1364,Abdominal Ultrasound,Radiology,7500.0,4517.0,Underpayment,2983.0,2025-12-20
+A235,P1366,Arthroscopy,Surgery,42000.0,42000.0,Coding Inconsistency,12600.0,2026-02-27
+A236,P1368,Blood Culture,Lab,2800.0,0.0,Denied Claim,2800.0,2026-02-05
+A237,P1371,Knee Surgery,Surgery,55000.0,38199.0,Underpayment,16801.0,2026-01-15
+A238,P1373,Angioplasty,Cardiology,60000.0,60000.0,AI Billing Anomaly,12000.0,2026-01-02
+A239,P1374,Angiography,Cardiology,30000.0,30000.0,Coding Inconsistency,9000.0,2026-02-24
+A240,P1375,Sleep Study,Neurology,10000.0,0.0,Claim Not Submitted,10000.0,2026-01-07
+A241,P1377,Stress Test,Cardiology,13000.0,13000.0,Coding Inconsistency,3900.0,2026-02-08
+A242,P1378,Endoscopy,Gastro,17000.0,0.0,Claim Not Submitted,17000.0,2025-12-24
+A243,P1379,CT Abdomen,Radiology,18000.0,0.0,Claim Not Submitted,18000.0,2026-01-12
+A244,P1380,Stress Test,Cardiology,0.0,0.0,Missing Charge,35968.15,2026-01-26
+A245,P1381,Liver Panel,Lab,4500.0,0.0,Denied Claim,4500.0,2026-02-28
+A246,P1383,Endoscopy,Gastro,0.0,0.0,Missing Charge,17285.71,2025-12-30
+A247,P1384,Spine MRI,Radiology,24000.0,9164.0,Underpayment,14836.0,2025-12-20
+A248,P1385,EEG,Neurology,11000.0,0.0,Denied Claim,11000.0,2026-02-03
+A249,P1386,Ultrasound,Radiology,8500.0,8500.0,Coding Inconsistency,2550.0,2026-03-06
+A250,P1387,Angiography,Cardiology,30000.0,0.0,Denied Claim,30000.0,2026-01-05
+A251,P1389,Nerve Conduction Study,Neurology,10500.0,0.0,Denied Claim,10500.0,2026-01-19
+A252,P1391,Lipid Profile,Lab,0.0,0.0,Missing Charge,2702.86,2026-01-05
+A253,P1392,EEG,Neurology,11000.0,6927.0,Underpayment,4073.0,2026-01-18
+A254,P1393,Ultrasound,Radiology,8500.0,8500.0,Coding Inconsistency,2550.0,2025-12-20
+A255,P1394,Lipid Profile,Lab,3200.0,2216.0,Underpayment,984.0,2026-02-14
+A256,P1398,Arthroscopy,Surgery,42000.0,0.0,Denied Claim,42000.0,2025-12-14
+A257,P1399,CT Abdomen,Radiology,18000.0,18000.0,Coding Inconsistency,5400.0,2026-01-31
+A258,P1401,Appendectomy,Surgery,40000.0,0.0,Claim Not Submitted,40000.0,2025-12-13
+A259,P1403,Sleep Study,Neurology,10000.0,10000.0,Coding Inconsistency,3000.0,2026-01-08
+A260,P1405,Stress Test,Cardiology,13000.0,0.0,Denied Claim,13000.0,2026-01-18
+A261,P1406,Arthroscopy,Surgery,42000.0,42000.0,Coding Inconsistency,12600.0,2025-12-13
+A262,P1408,Knee Surgery,Surgery,55000.0,33269.0,Underpayment,21731.0,2025-12-14
+A263,P1409,Gallbladder Surgery,Surgery,48000.0,0.0,Denied Claim,48000.0,2026-03-02
+A264,P1412,Abdominal Ultrasound,Radiology,0.0,0.0,Missing Charge,14449.8,2026-02-10
+A265,P1415,Angiography,Cardiology,30000.0,30000.0,AI Billing Anomaly,6000.0,2026-01-28
+A266,P1417,Pacemaker Implant,Cardiology,80000.0,52024.0,Underpayment,27976.0,2026-01-04
+A267,P1418,Liver Panel,Lab,4500.0,2340.0,Underpayment,2160.0,2026-02-13
+A268,P1419,Abdominal Ultrasound,Radiology,0.0,0.0,Missing Charge,14449.8,2025-12-22
+A269,P1420,Stress Test,Cardiology,13000.0,8292.0,Underpayment,4708.0,2026-02-04
+A270,P1423,EEG,Neurology,11000.0,11000.0,Coding Inconsistency,3300.0,2025-12-15
+A271,P1424,Stress Test,Cardiology,13000.0,0.0,Denied Claim,13000.0,2026-01-12
+A272,P1425,Angiography,Cardiology,30000.0,30000.0,AI Billing Anomaly,6000.0,2026-02-28
+A273,P1426,Angioplasty,Cardiology,60000.0,21366.0,Underpayment,38634.0,2026-02-05
+A274,P1428,Stress Test,Cardiology,0.0,0.0,Missing Charge,35968.15,2026-02-24
+A275,P1430,Angioplasty,Cardiology,60000.0,0.0,Denied Claim,60000.0,2026-02-11
+A276,P1432,Thyroid Test,Lab,1800.0,1800.0,Coding Inconsistency,540.0,2026-01-25
+A277,P1436,Glucose Test,Lab,1200.0,1200.0,Coding Inconsistency,360.0,2026-01-13
+A278,P1437,Cardiac Echo,Cardiology,0.0,0.0,Missing Charge,35968.15,2026-02-27
+A279,P1438,Angioplasty,Cardiology,60000.0,0.0,Claim Not Submitted,60000.0,2026-01-07
+A280,P1440,Sleep Study,Neurology,10000.0,3426.0,Underpayment,6574.0,2025-12-10
+A281,P1443,Knee Surgery,Surgery,0.0,0.0,Missing Charge,44953.95,2026-03-01
+A282,P1444,Glucose Test,Lab,1200.0,1200.0,Coding Inconsistency,360.0,2026-01-26
+A283,P1445,Pacemaker Implant,Cardiology,80000.0,0.0,Denied Claim,80000.0,2025-12-30
+A284,P1446,Angioplasty,Cardiology,60000.0,60000.0,AI Billing Anomaly,12000.0,2026-02-05
+A285,P1448,CT Chest,Radiology,17000.0,8288.0,Underpayment,8712.0,2026-03-08
+A286,P1450,Upper GI Endoscopy,Gastro,15000.0,0.0,Denied Claim,15000.0,2026-01-14
+A287,P1453,Spine MRI,Radiology,24000.0,0.0,Claim Not Submitted,24000.0,2026-02-16
+A288,P1455,MRI Brain,Radiology,22000.0,22000.0,Coding Inconsistency,6600.0,2026-01-06
+A289,P1456,Abdominal Ultrasound,Radiology,7500.0,2715.0,Underpayment,4785.0,2026-02-21
+A290,P1457,Thyroid Test,Lab,1800.0,0.0,Denied Claim,1800.0,2026-02-16
+A291,P1458,Nerve Conduction Study,Neurology,10500.0,0.0,Denied Claim,10500.0,2026-02-26
+A292,P1459,CT Chest,Radiology,17000.0,0.0,Claim Not Submitted,17000.0,2025-12-16
+A293,P1464,CT Abdomen,Radiology,18000.0,18000.0,Coding Inconsistency,5400.0,2026-01-01
+A294,P1465,CT Abdomen,Radiology,18000.0,18000.0,Coding Inconsistency,5400.0,2025-12-25
+A295,P1467,Hernia Repair,Surgery,35000.0,0.0,Claim Not Submitted,35000.0,2026-02-26
+A296,P1469,MRI Brain,Radiology,22000.0,0.0,Denied Claim,22000.0,2026-02-13
+A297,P1473,Lipid Profile,Lab,3200.0,0.0,Denied Claim,3200.0,2026-01-20
+A298,P1474,Angioplasty,Cardiology,60000.0,28182.0,Underpayment,31818.0,2025-12-28
+A299,P1476,Glucose Test,Lab,1200.0,0.0,Denied Claim,1200.0,2026-02-14
+A300,P1477,CT Chest,Radiology,17000.0,17000.0,Coding Inconsistency,5100.0,2026-01-25
+A301,P1478,Thyroid Test,Lab,1800.0,675.0,Underpayment,1125.0,2026-03-03
+A302,P1481,Hernia Repair,Surgery,0.0,0.0,Missing Charge,44953.95,2026-01-27
+A303,P1482,Stress Test,Cardiology,13000.0,0.0,Denied Claim,13000.0,2025-12-18
+A304,P1485,Blood Panel,Lab,2500.0,766.0,Underpayment,1734.0,2026-01-13
+A305,P1486,Pacemaker Implant,Cardiology,80000.0,80000.0,AI Billing Anomaly,16000.0,2026-01-09
+A306,P1488,Angiography,Cardiology,30000.0,30000.0,AI Billing Anomaly,6000.0,2026-02-20
+A307,P1489,Colonoscopy,Gastro,0.0,0.0,Missing Charge,17285.71,2026-02-24
+A308,P1490,MRI Brain,Radiology,22000.0,0.0,Claim Not Submitted,22000.0,2026-01-28
+A309,P1492,Pacemaker Implant,Cardiology,0.0,0.0,Missing Charge,35968.15,2026-02-09
+A310,P1493,Gallbladder Surgery,Surgery,48000.0,48000.0,AI Billing Anomaly,9600.0,2026-01-17
+A311,P1494,Angioplasty,Cardiology,60000.0,0.0,Denied Claim,60000.0,2026-02-07
+A312,P1497,Endoscopy,Gastro,0.0,0.0,Missing Charge,17285.71,2026-03-09
+A313,P1501,Gallbladder Surgery,Surgery,48000.0,48000.0,Coding Inconsistency,14400.0,2026-03-02
+A314,P1505,Knee Surgery,Surgery,55000.0,55000.0,Coding Inconsistency,16500.0,2026-02-27
+A315,P1506,Knee Surgery,Surgery,55000.0,27902.0,Underpayment,27098.0,2025-12-13
+A316,P1507,Pacemaker Implant,Cardiology,80000.0,52408.0,Underpayment,27592.0,2025-12-31
+A317,P1508,Arthroscopy,Surgery,42000.0,0.0,Claim Not Submitted,42000.0,2025-12-17
+A318,P1509,X-Ray Chest,Radiology,3500.0,0.0,Claim Not Submitted,3500.0,2026-02-26
+A319,P1510,Blood Panel,Lab,2500.0,2500.0,Coding Inconsistency,750.0,2026-01-03
+A320,P1511,Pacemaker Implant,Cardiology,80000.0,80000.0,AI Billing Anomaly,16000.0,2025-12-25
+A321,P1512,Angioplasty,Cardiology,60000.0,60000.0,AI Billing Anomaly,12000.0,2026-02-13
+A322,P1514,Hernia Repair,Surgery,35000.0,0.0,Claim Not Submitted,35000.0,2025-12-19
+A323,P1515,Angioplasty,Cardiology,60000.0,60000.0,AI Billing Anomaly,12000.0,2026-02-15
+A324,P1518,Abdominal Ultrasound,Radiology,0.0,0.0,Missing Charge,14449.8,2026-02-12
+A325,P1520,Angiography,Cardiology,30000.0,30000.0,AI Billing Anomaly,6000.0,2026-01-07
+A326,P1521,Knee Surgery,Surgery,55000.0,55000.0,Coding Inconsistency,16500.0,2026-03-03
+A327,P1522,Spine MRI,Radiology,24000.0,24000.0,Coding Inconsistency,7200.0,2026-01-28
+A328,P1525,Angiography,Cardiology,30000.0,30000.0,AI Billing Anomaly,6000.0,2026-02-15
+A329,P1526,Pacemaker Implant,Cardiology,80000.0,80000.0,AI Billing Anomaly,16000.0,2026-01-29
+A330,P1527,Upper GI Endoscopy,Gastro,15000.0,6237.0,Underpayment,8763.0,2026-02-23
+A331,P1529,Sleep Study,Neurology,10000.0,10000.0,Coding Inconsistency,3000.0,2026-01-19
+A332,P1530,Spine MRI,Radiology,0.0,0.0,Missing Charge,14449.8,2026-01-30
+A333,P1535,Gallbladder Surgery,Surgery,48000.0,0.0,Claim Not Submitted,48000.0,2026-02-08
+A334,P1537,Blood Panel,Lab,2500.0,1186.0,Underpayment,1314.0,2025-12-21
+A335,P1540,Appendectomy,Surgery,40000.0,0.0,Denied Claim,40000.0,2026-02-04
+A336,P1541,Arthroscopy,Surgery,42000.0,0.0,Claim Not Submitted,42000.0,2025-12-22
+A337,P1544,CT Chest,Radiology,17000.0,0.0,Claim Not Submitted,17000.0,2026-02-15
+A338,P1545,Pacemaker Implant,Cardiology,80000.0,0.0,Denied Claim,80000.0,2026-02-22
+A339,P1546,Colonoscopy,Gastro,19000.0,19000.0,Coding Inconsistency,5700.0,2025-12-23
+A340,P1547,Hernia Repair,Surgery,35000.0,17828.0,Underpayment,17172.0,2026-03-09
+A341,P1548,Knee Surgery,Surgery,55000.0,55000.0,Coding Inconsistency,16500.0,2026-02-26
+A342,P1550,Knee Surgery,Surgery,55000.0,38236.0,Underpayment,16764.0,2026-01-24
+A343,P1554,Angioplasty,Cardiology,60000.0,60000.0,AI Billing Anomaly,12000.0,2026-03-09
+A344,P1555,Stress Test,Cardiology,13000.0,7852.0,Underpayment,5148.0,2026-03-01
+A345,P1556,CT Brain,Radiology,16000.0,0.0,Claim Not Submitted,16000.0,2026-01-01
+A346,P1557,Knee Surgery,Surgery,55000.0,0.0,Denied Claim,55000.0,2026-02-10
+A347,P1558,Abdominal Ultrasound,Radiology,7500.0,0.0,Denied Claim,7500.0,2026-02-02
+A348,P1560,X-Ray Chest,Radiology,0.0,0.0,Missing Charge,14449.8,2025-12-25
+A349,P1561,Upper GI Endoscopy,Gastro,15000.0,6997.0,Underpayment,8003.0,2025-12-31
+A350,P1562,Gallbladder Surgery,Surgery,48000.0,0.0,Denied Claim,48000.0,2026-01-25
+A351,P1564,Knee Surgery,Surgery,55000.0,27784.0,Underpayment,27216.0,2026-02-15
+A352,P1566,EEG,Neurology,11000.0,11000.0,Coding Inconsistency,3300.0,2026-02-03
+A353,P1567,Ultrasound,Radiology,8500.0,0.0,Claim Not Submitted,8500.0,2026-02-15
+A354,P1568,Stress Test,Cardiology,13000.0,0.0,Claim Not Submitted,13000.0,2026-01-04
+A355,P1569,EEG,Neurology,11000.0,0.0,Denied Claim,11000.0,2026-03-07
+A356,P1570,X-Ray Chest,Radiology,0.0,0.0,Missing Charge,14449.8,2026-02-06
+A357,P1572,Pacemaker Implant,Cardiology,80000.0,0.0,Denied Claim,80000.0,2026-02-06
+A358,P1573,MRI Brain,Radiology,22000.0,22000.0,Coding Inconsistency,6600.0,2026-01-07
+A359,P1577,Upper GI Endoscopy,Gastro,15000.0,0.0,Denied Claim,15000.0,2026-01-28
+A360,P1578,Gallbladder Surgery,Surgery,48000.0,30992.0,Underpayment,17008.0,2026-02-18
+A361,P1581,Gallbladder Surgery,Surgery,48000.0,0.0,Denied Claim,48000.0,2026-03-06
+A362,P1582,MRI Brain,Radiology,22000.0,0.0,Denied Claim,22000.0,2026-02-03
+A363,P1583,Upper GI Endoscopy,Gastro,0.0,0.0,Missing Charge,17285.71,2025-12-13
+A364,P1586,Abdominal Ultrasound,Radiology,0.0,0.0,Missing Charge,14449.8,2026-01-05
+A365,P1589,Stress Test,Cardiology,13000.0,13000.0,Coding Inconsistency,3900.0,2026-01-15
+A366,P1590,Nerve Conduction Study,Neurology,0.0,0.0,Missing Charge,10526.6,2026-01-28
+A367,P1592,Colonoscopy,Gastro,19000.0,0.0,Claim Not Submitted,19000.0,2026-03-06
+A368,P1593,Knee Surgery,Surgery,55000.0,0.0,Denied Claim,55000.0,2026-01-13
+A369,P1594,Sleep Study,Neurology,10000.0,4950.0,Underpayment,5050.0,2026-02-26
+A370,P1595,Blood Panel,Lab,2500.0,2500.0,Coding Inconsistency,750.0,2026-02-28
+A371,P1596,Arthroscopy,Surgery,42000.0,42000.0,Coding Inconsistency,12600.0,2026-02-01
+A372,P1597,CT Abdomen,Radiology,18000.0,0.0,Denied Claim,18000.0,2026-02-06
+A373,P1599,Arthroscopy,Surgery,42000.0,0.0,Claim Not Submitted,42000.0,2026-01-19
+A374,P1600,Arthroscopy,Surgery,42000.0,0.0,Claim Not Submitted,42000.0,2026-02-26
+A375,P1601,Stress Test,Cardiology,13000.0,0.0,Denied Claim,13000.0,2026-02-16
+A376,P1602,EEG,Neurology,11000.0,0.0,Claim Not Submitted,11000.0,2026-02-24
+A377,P1603,Blood Panel,Lab,2500.0,0.0,Claim Not Submitted,2500.0,2026-03-03
+A378,P1605,Blood Culture,Lab,0.0,0.0,Missing Charge,2702.86,2026-02-26
+A379,P1606,Gallbladder Surgery,Surgery,48000.0,0.0,Claim Not Submitted,48000.0,2026-02-14
+A380,P1607,Angiography,Cardiology,30000.0,0.0,Denied Claim,30000.0,2026-01-18
+A381,P1609,Abdominal Ultrasound,Radiology,7500.0,2994.0,Underpayment,4506.0,2026-03-01
+A382,P1610,Angiography,Cardiology,30000.0,30000.0,AI Billing Anomaly,6000.0,2025-12-20
+A383,P1614,Liver Panel,Lab,4500.0,1477.0,Underpayment,3023.0,2026-02-19
+A384,P1615,EEG,Neurology,11000.0,11000.0,Coding Inconsistency,3300.0,2026-03-01
+A385,P1616,CT Chest,Radiology,17000.0,0.0,Denied Claim,17000.0,2026-02-06
+A386,P1617,Blood Culture,Lab,2800.0,2800.0,Coding Inconsistency,840.0,2026-03-05
+A387,P1618,X-Ray Chest,Radiology,3500.0,3500.0,Coding Inconsistency,1050.0,2025-12-30
+A388,P1619,Pacemaker Implant,Cardiology,80000.0,0.0,Claim Not Submitted,80000.0,2025-12-27
+A389,P1620,Abdominal Ultrasound,Radiology,0.0,0.0,Missing Charge,14449.8,2026-02-19
+A390,P1621,Nerve Conduction Study,Neurology,10500.0,0.0,Denied Claim,10500.0,2026-01-11
+A391,P1622,Colonoscopy,Gastro,19000.0,19000.0,Coding Inconsistency,5700.0,2026-02-23
+A392,P1624,Cardiac Echo,Cardiology,12000.0,0.0,Denied Claim,12000.0,2025-12-22
+A393,P1626,Appendectomy,Surgery,0.0,0.0,Missing Charge,44953.95,2026-01-06
+A394,P1628,Blood Panel,Lab,2500.0,2500.0,Coding Inconsistency,750.0,2026-02-08
+A395,P1629,Liver Panel,Lab,4500.0,2035.0,Underpayment,2465.0,2026-03-08
+A396,P1631,Arthroscopy,Surgery,0.0,0.0,Missing Charge,44953.95,2026-02-22
+A397,P1632,Gallbladder Surgery,Surgery,48000.0,48000.0,Coding Inconsistency,14400.0,2026-03-05
+A398,P1633,Nerve Conduction Study,Neurology,10500.0,0.0,Denied Claim,10500.0,2026-01-04
+A399,P1634,Appendectomy,Surgery,0.0,0.0,Missing Charge,44953.95,2026-02-17
+A400,P1635,Knee Surgery,Surgery,55000.0,55000.0,Coding Inconsistency,16500.0,2026-02-04
+A401,P1636,Knee Surgery,Surgery,55000.0,0.0,Denied Claim,55000.0,2026-02-06
+A402,P1639,X-Ray Chest,Radiology,3500.0,0.0,Denied Claim,3500.0,2025-12-25
+A403,P1640,Thyroid Test,Lab,1800.0,0.0,Claim Not Submitted,1800.0,2026-02-09
+A404,P1641,Liver Panel,Lab,4500.0,0.0,Denied Claim,4500.0,2025-12-22
+A405,P1642,Knee Surgery,Surgery,55000.0,55000.0,Coding Inconsistency,16500.0,2026-01-28
+A406,P1643,Colonoscopy,Gastro,19000.0,0.0,Claim Not Submitted,19000.0,2026-01-21
+A407,P1644,Endoscopy,Gastro,17000.0,17000.0,Coding Inconsistency,5100.0,2026-01-01
+A408,P1646,CT Brain,Radiology,0.0,0.0,Missing Charge,14449.8,2026-01-11
+A409,P1648,Stress Test,Cardiology,13000.0,0.0,Denied Claim,13000.0,2026-01-25
+A410,P1649,Colonoscopy,Gastro,19000.0,19000.0,Coding Inconsistency,5700.0,2026-01-06
+A411,P1650,Stress Test,Cardiology,13000.0,0.0,Denied Claim,13000.0,2025-12-12
+A412,P1651,CT Chest,Radiology,17000.0,0.0,Claim Not Submitted,17000.0,2026-01-19
+A413,P1653,Appendectomy,Surgery,40000.0,0.0,Denied Claim,40000.0,2026-01-23
+A414,P1654,Blood Panel,Lab,2500.0,1215.0,Underpayment,1285.0,2026-01-21
+A415,P1655,Arthroscopy,Surgery,0.0,0.0,Missing Charge,44953.95,2025-12-23
+A416,P1656,Appendectomy,Surgery,0.0,0.0,Missing Charge,44953.95,2026-01-13
+A417,P1657,Thyroid Test,Lab,1800.0,0.0,Claim Not Submitted,1800.0,2025-12-17
+A418,P1658,Glucose Test,Lab,1200.0,1200.0,Coding Inconsistency,360.0,2025-12-24
+A419,P1659,Gallbladder Surgery,Surgery,48000.0,48000.0,AI Billing Anomaly,9600.0,2025-12-29
+A420,P1662,Knee Surgery,Surgery,55000.0,55000.0,Coding Inconsistency,16500.0,2025-12-25
+A421,P1666,Hernia Repair,Surgery,35000.0,35000.0,Coding Inconsistency,10500.0,2025-12-29
+A422,P1667,Arthroscopy,Surgery,42000.0,13926.0,Underpayment,28074.0,2025-12-31
+A423,P1670,Endoscopy,Gastro,0.0,0.0,Missing Charge,17285.71,2026-02-26
+A424,P1671,MRI Brain,Radiology,22000.0,0.0,Claim Not Submitted,22000.0,2026-01-17
+A425,P1672,Abdominal Ultrasound,Radiology,7500.0,7500.0,Coding Inconsistency,2250.0,2026-01-07
+A426,P1673,Colonoscopy,Gastro,19000.0,0.0,Denied Claim,19000.0,2026-01-24
+A427,P1674,X-Ray Chest,Radiology,3500.0,0.0,Denied Claim,3500.0,2026-02-24
+A428,P1675,Cardiac Echo,Cardiology,0.0,0.0,Missing Charge,35968.15,2026-02-24
+A429,P1678,Knee Surgery,Surgery,55000.0,0.0,Denied Claim,55000.0,2025-12-12
+A430,P1679,Stress Test,Cardiology,0.0,0.0,Missing Charge,35968.15,2026-02-26
+A431,P1682,Endoscopy,Gastro,17000.0,0.0,Claim Not Submitted,17000.0,2025-12-31
+A432,P1683,Glucose Test,Lab,1200.0,0.0,Claim Not Submitted,1200.0,2025-12-31
+A433,P1685,X-Ray Chest,Radiology,3500.0,3500.0,Coding Inconsistency,1050.0,2026-02-21
+A434,P1686,Arthroscopy,Surgery,0.0,0.0,Missing Charge,44953.95,2026-01-26
+A435,P1689,MRI Brain,Radiology,22000.0,9257.0,Underpayment,12743.0,2026-02-12
+A436,P1690,X-Ray Chest,Radiology,3500.0,2179.0,Underpayment,1321.0,2025-12-14
+A437,P1691,Angioplasty,Cardiology,60000.0,60000.0,AI Billing Anomaly,12000.0,2026-02-17
+A438,P1692,Angiography,Cardiology,30000.0,9050.0,Underpayment,20950.0,2026-03-07
+A439,P1693,Ultrasound,Radiology,8500.0,0.0,Denied Claim,8500.0,2025-12-28
+A440,P1694,Spine MRI,Radiology,24000.0,0.0,Denied Claim,24000.0,2026-01-09
+A441,P1696,Upper GI Endoscopy,Gastro,0.0,0.0,Missing Charge,17285.71,2026-02-21
+A442,P1697,X-Ray Chest,Radiology,3500.0,3500.0,Coding Inconsistency,1050.0,2026-01-23
+A443,P1698,Knee Surgery,Surgery,55000.0,0.0,Denied Claim,55000.0,2025-12-23
+A444,P1699,Spine MRI,Radiology,0.0,0.0,Missing Charge,14449.8,2026-02-08
+A445,P1700,Cardiac Echo,Cardiology,12000.0,7673.0,Underpayment,4327.0,2026-03-04
+A446,P1701,Stress Test,Cardiology,13000.0,13000.0,Coding Inconsistency,3900.0,2026-01-20
+A447,P1703,Angioplasty,Cardiology,0.0,0.0,Missing Charge,35968.15,2026-03-01
+A448,P1704,Colonoscopy,Gastro,19000.0,0.0,Denied Claim,19000.0,2026-01-30
+A449,P1705,Spine MRI,Radiology,24000.0,0.0,Claim Not Submitted,24000.0,2026-01-08
+A450,P1708,Pacemaker Implant,Cardiology,80000.0,55361.0,Underpayment,24639.0,2026-02-07
+A451,P1710,Thyroid Test,Lab,1800.0,1085.0,Underpayment,715.0,2026-03-09
+A452,P1711,Spine MRI,Radiology,24000.0,0.0,Claim Not Submitted,24000.0,2026-01-01
+A453,P1713,Gallbladder Surgery,Surgery,48000.0,48000.0,Coding Inconsistency,14400.0,2025-12-28
+A454,P1714,Angioplasty,Cardiology,60000.0,0.0,Denied Claim,60000.0,2026-02-08
+A455,P1715,Blood Culture,Lab,2800.0,0.0,Claim Not Submitted,2800.0,2026-01-22
+A456,P1716,MRI Brain,Radiology,22000.0,7461.0,Underpayment,14539.0,2026-02-13
+A457,P1718,Gallbladder Surgery,Surgery,48000.0,48000.0,AI Billing Anomaly,9600.0,2026-03-08
+A458,P1719,Lipid Profile,Lab,3200.0,0.0,Denied Claim,3200.0,2025-12-19
+A459,P1721,Pacemaker Implant,Cardiology,80000.0,0.0,Denied Claim,80000.0,2026-03-08
+A460,P1722,Upper GI Endoscopy,Gastro,15000.0,0.0,Denied Claim,15000.0,2026-01-26
+A461,P1723,Stress Test,Cardiology,13000.0,0.0,Claim Not Submitted,13000.0,2026-02-01
+A462,P1724,Blood Culture,Lab,2800.0,0.0,Claim Not Submitted,2800.0,2026-02-16
+A463,P1727,Colonoscopy,Gastro,19000.0,0.0,Denied Claim,19000.0,2026-01-03
+A464,P1728,Hernia Repair,Surgery,35000.0,0.0,Denied Claim,35000.0,2026-02-09
+A465,P1729,Glucose Test,Lab,1200.0,408.0,Underpayment,792.0,2026-01-28
+A466,P1731,Spine MRI,Radiology,24000.0,24000.0,Coding Inconsistency,7200.0,2026-01-04
+A467,P1732,MRI Brain,Radiology,22000.0,12466.0,Underpayment,9534.0,2026-01-01
+A468,P1733,Angiography,Cardiology,30000.0,30000.0,AI Billing Anomaly,6000.0,2026-02-03
+A469,P1735,Hernia Repair,Surgery,35000.0,0.0,Claim Not Submitted,35000.0,2026-01-25
+A470,P1736,EEG,Neurology,0.0,0.0,Missing Charge,10526.6,2026-01-05
+A471,P1738,CT Abdomen,Radiology,18000.0,0.0,Denied Claim,18000.0,2026-01-21
+A472,P1739,Arthroscopy,Surgery,42000.0,0.0,Denied Claim,42000.0,2026-02-23
+A473,P1740,Stress Test,Cardiology,13000.0,7652.0,Underpayment,5348.0,2026-01-11
+A474,P1742,Ultrasound,Radiology,8500.0,0.0,Claim Not Submitted,8500.0,2026-01-25
+A475,P1743,Hernia Repair,Surgery,35000.0,0.0,Denied Claim,35000.0,2026-02-10
+A476,P1744,Gallbladder Surgery,Surgery,48000.0,0.0,Claim Not Submitted,48000.0,2026-02-25
+A477,P1746,Hernia Repair,Surgery,35000.0,0.0,Claim Not Submitted,35000.0,2026-01-20
+A478,P1747,MRI Brain,Radiology,22000.0,8905.0,Underpayment,13095.0,2026-02-28
+A479,P1752,Sleep Study,Neurology,10000.0,10000.0,Coding Inconsistency,3000.0,2026-02-13
+A480,P1753,Angioplasty,Cardiology,60000.0,60000.0,AI Billing Anomaly,12000.0,2026-01-11
+A481,P1754,CT Abdomen,Radiology,18000.0,7680.0,Underpayment,10320.0,2026-02-04
+A482,P1755,Angiography,Cardiology,30000.0,0.0,Claim Not Submitted,30000.0,2025-12-21
+A483,P1756,Abdominal Ultrasound,Radiology,7500.0,0.0,Denied Claim,7500.0,2026-01-11
+A484,P1758,CT Abdomen,Radiology,18000.0,0.0,Denied Claim,18000.0,2026-01-03
+A485,P1759,Thyroid Test,Lab,1800.0,0.0,Denied Claim,1800.0,2026-01-10
+A486,P1761,MRI Brain,Radiology,22000.0,0.0,Denied Claim,22000.0,2026-02-13
+A487,P1762,Arthroscopy,Surgery,42000.0,0.0,Claim Not Submitted,42000.0,2026-01-15
+A488,P1764,Gallbladder Surgery,Surgery,48000.0,26062.0,Underpayment,21938.0,2025-12-25
+A489,P1765,Glucose Test,Lab,1200.0,0.0,Claim Not Submitted,1200.0,2026-03-03
+A490,P1767,Gallbladder Surgery,Surgery,48000.0,0.0,Denied Claim,48000.0,2026-02-07
+A491,P1768,Blood Culture,Lab,2800.0,2800.0,Coding Inconsistency,840.0,2026-01-06
+A492,P1770,Knee Surgery,Surgery,55000.0,0.0,Claim Not Submitted,55000.0,2026-01-12
+A493,P1772,Ultrasound,Radiology,8500.0,0.0,Denied Claim,8500.0,2026-02-22
+A494,P1773,Blood Culture,Lab,0.0,0.0,Missing Charge,2702.86,2026-01-01
+A495,P1774,Arthroscopy,Surgery,42000.0,0.0,Denied Claim,42000.0,2026-02-04
+A496,P1775,CT Chest,Radiology,17000.0,0.0,Claim Not Submitted,17000.0,2026-01-05
+A497,P1778,Liver Panel,Lab,4500.0,0.0,Claim Not Submitted,4500.0,2026-02-04
+A498,P1780,Arthroscopy,Surgery,0.0,0.0,Missing Charge,44953.95,2026-02-23
+A499,P1782,X-Ray Chest,Radiology,3500.0,3500.0,Coding Inconsistency,1050.0,2026-01-10
+A500,P1783,CT Abdomen,Radiology,0.0,0.0,Missing Charge,14449.8,2026-02-14
+A501,P1784,Angioplasty,Cardiology,60000.0,60000.0,Coding Inconsistency,18000.0,2025-12-29
+A502,P1785,Blood Culture,Lab,2800.0,0.0,Claim Not Submitted,2800.0,2025-12-10
+A503,P1786,Nerve Conduction Study,Neurology,10500.0,3346.0,Underpayment,7154.0,2026-01-11
+A504,P1788,Thyroid Test,Lab,1800.0,1800.0,Coding Inconsistency,540.0,2026-01-14
+A505,P1790,Pacemaker Implant,Cardiology,80000.0,48887.0,Underpayment,31113.0,2025-12-21
+A506,P1791,Spine MRI,Radiology,24000.0,13372.0,Underpayment,10628.0,2026-01-25
+A507,P1793,Angioplasty,Cardiology,60000.0,60000.0,AI Billing Anomaly,12000.0,2026-01-21
+A508,P1794,Thyroid Test,Lab,0.0,0.0,Missing Charge,2702.86,2025-12-27
+A509,P1795,Knee Surgery,Surgery,55000.0,0.0,Claim Not Submitted,55000.0,2026-02-20
+A510,P1799,X-Ray Chest,Radiology,3500.0,0.0,Claim Not Submitted,3500.0,2026-01-19
+A511,P1800,Sleep Study,Neurology,10000.0,0.0,Claim Not Submitted,10000.0,2025-12-18
+A512,P1803,Angioplasty,Cardiology,60000.0,60000.0,AI Billing Anomaly,12000.0,2026-01-21
+A513,P1805,Glucose Test,Lab,1200.0,0.0,Claim Not Submitted,1200.0,2026-02-02
+A514,P1807,Arthroscopy,Surgery,42000.0,0.0,Denied Claim,42000.0,2025-12-23
+A515,P1808,Angiography,Cardiology,30000.0,0.0,Claim Not Submitted,30000.0,2026-02-16
+A516,P1809,Nerve Conduction Study,Neurology,10500.0,4864.0,Underpayment,5636.0,2025-12-27
+A517,P1810,CT Brain,Radiology,16000.0,0.0,Claim Not Submitted,16000.0,2026-01-25
+A518,P1813,Stress Test,Cardiology,13000.0,13000.0,Coding Inconsistency,3900.0,2026-02-18
+A519,P1814,Knee Surgery,Surgery,55000.0,55000.0,Coding Inconsistency,16500.0,2026-02-13
+A520,P1815,Cardiac Echo,Cardiology,12000.0,12000.0,Coding Inconsistency,3600.0,2026-01-14
+A521,P1817,Appendectomy,Surgery,40000.0,0.0,Claim Not Submitted,40000.0,2026-01-09
+A522,P1818,MRI Brain,Radiology,22000.0,12934.0,Underpayment,9066.0,2026-03-03
+A523,P1819,Ultrasound,Radiology,8500.0,8500.0,Coding Inconsistency,2550.0,2026-01-03
+A524,P1821,EEG,Neurology,11000.0,0.0,Denied Claim,11000.0,2026-01-30
+A525,P1822,Abdominal Ultrasound,Radiology,7500.0,0.0,Claim Not Submitted,7500.0,2026-02-01
+A526,P1823,CT Brain,Radiology,16000.0,0.0,Claim Not Submitted,16000.0,2026-02-22
+A527,P1825,Thyroid Test,Lab,1800.0,1800.0,Coding Inconsistency,540.0,2026-02-19
+A528,P1826,Stress Test,Cardiology,13000.0,0.0,Denied Claim,13000.0,2026-03-06
+A529,P1827,Colonoscopy,Gastro,19000.0,0.0,Claim Not Submitted,19000.0,2026-01-25
+A530,P1830,Nerve Conduction Study,Neurology,10500.0,10500.0,Coding Inconsistency,3150.0,2026-01-27
+A531,P1832,Cardiac Echo,Cardiology,12000.0,0.0,Denied Claim,12000.0,2026-03-01
+A532,P1834,Lipid Profile,Lab,3200.0,0.0,Denied Claim,3200.0,2026-03-09
+A533,P1838,Colonoscopy,Gastro,0.0,0.0,Missing Charge,17285.71,2025-12-12
+A534,P1839,Abdominal Ultrasound,Radiology,7500.0,0.0,Denied Claim,7500.0,2026-03-09
+A535,P1841,Colonoscopy,Gastro,19000.0,0.0,Denied Claim,19000.0,2026-02-01
+A536,P1843,Thyroid Test,Lab,1800.0,0.0,Denied Claim,1800.0,2025-12-11
+A537,P1845,Blood Panel,Lab,2500.0,0.0,Claim Not Submitted,2500.0,2026-02-18
+A538,P1846,Nerve Conduction Study,Neurology,10500.0,0.0,Claim Not Submitted,10500.0,2026-02-21
+A539,P1847,CT Chest,Radiology,17000.0,17000.0,Coding Inconsistency,5100.0,2026-01-20
+A540,P1849,Colonoscopy,Gastro,19000.0,0.0,Denied Claim,19000.0,2025-12-31
+A541,P1850,Appendectomy,Surgery,40000.0,40000.0,Coding Inconsistency,12000.0,2026-03-04
+A542,P1851,CT Chest,Radiology,17000.0,0.0,Denied Claim,17000.0,2026-03-08
+A543,P1852,Knee Surgery,Surgery,55000.0,55000.0,Coding Inconsistency,16500.0,2025-12-23
+A544,P1853,Abdominal Ultrasound,Radiology,0.0,0.0,Missing Charge,14449.8,2025-12-26
+A545,P1855,Upper GI Endoscopy,Gastro,15000.0,0.0,Denied Claim,15000.0,2026-02-23
+A546,P1856,Hernia Repair,Surgery,0.0,0.0,Missing Charge,44953.95,2026-01-04
+A547,P1857,Lipid Profile,Lab,3200.0,0.0,Denied Claim,3200.0,2026-02-12
+A548,P1859,Angioplasty,Cardiology,60000.0,0.0,Denied Claim,60000.0,2026-03-03
+A549,P1860,Pacemaker Implant,Cardiology,80000.0,42005.0,Underpayment,37995.0,2026-02-03
+A550,P1861,CT Chest,Radiology,17000.0,0.0,Denied Claim,17000.0,2026-01-13
+A551,P1862,Gallbladder Surgery,Surgery,48000.0,48000.0,AI Billing Anomaly,9600.0,2025-12-25
+A552,P1864,Ultrasound,Radiology,8500.0,4572.0,Underpayment,3928.0,2025-12-18
+A553,P1865,Upper GI Endoscopy,Gastro,15000.0,15000.0,Coding Inconsistency,4500.0,2025-12-13
+A554,P1866,Nerve Conduction Study,Neurology,10500.0,0.0,Claim Not Submitted,10500.0,2026-01-29
+A555,P1867,Angioplasty,Cardiology,0.0,0.0,Missing Charge,35968.15,2026-02-16
+A556,P1868,Colonoscopy,Gastro,19000.0,0.0,Denied Claim,19000.0,2026-02-09
+A557,P1871,Knee Surgery,Surgery,55000.0,38394.0,Underpayment,16606.0,2026-02-10
+A558,P1874,Lipid Profile,Lab,3200.0,0.0,Denied Claim,3200.0,2026-03-01
+A559,P1875,Stress Test,Cardiology,13000.0,13000.0,Coding Inconsistency,3900.0,2026-02-05
+A560,P1877,Sleep Study,Neurology,10000.0,0.0,Denied Claim,10000.0,2026-02-04
+A561,P1878,Upper GI Endoscopy,Gastro,15000.0,0.0,Denied Claim,15000.0,2026-01-19
+A562,P1879,Nerve Conduction Study,Neurology,10500.0,3300.0,Underpayment,7200.0,2026-03-01
+A563,P1883,Hernia Repair,Surgery,35000.0,0.0,Denied Claim,35000.0,2026-01-23
+A564,P1886,Liver Panel,Lab,4500.0,0.0,Denied Claim,4500.0,2026-01-22
+A565,P1887,Appendectomy,Surgery,40000.0,40000.0,Coding Inconsistency,12000.0,2026-02-03
+A566,P1888,Gallbladder Surgery,Surgery,48000.0,0.0,Claim Not Submitted,48000.0,2026-03-08
+A567,P1889,CT Brain,Radiology,16000.0,0.0,Denied Claim,16000.0,2026-01-17
+A568,P1890,Spine MRI,Radiology,24000.0,0.0,Claim Not Submitted,24000.0,2026-02-01
+A569,P1892,Cardiac Echo,Cardiology,0.0,0.0,Missing Charge,35968.15,2026-01-31
+A570,P1895,Arthroscopy,Surgery,42000.0,0.0,Claim Not Submitted,42000.0,2025-12-25
+A571,P1896,Ultrasound,Radiology,8500.0,0.0,Claim Not Submitted,8500.0,2026-01-25
+A572,P1897,X-Ray Chest,Radiology,3500.0,0.0,Denied Claim,3500.0,2026-02-18
+A573,P1898,Blood Panel,Lab,2500.0,2500.0,Coding Inconsistency,750.0,2026-02-12
+A574,P1899,CT Chest,Radiology,17000.0,0.0,Claim Not Submitted,17000.0,2026-02-08
+A575,P1900,Upper GI Endoscopy,Gastro,15000.0,0.0,Claim Not Submitted,15000.0,2026-02-22
+A576,P1902,EEG,Neurology,11000.0,0.0,Claim Not Submitted,11000.0,2025-12-28
+A577,P1904,CT Brain,Radiology,16000.0,0.0,Denied Claim,16000.0,2025-12-19
+A578,P1906,Angioplasty,Cardiology,60000.0,60000.0,AI Billing Anomaly,12000.0,2025-12-13
+A579,P1907,Lipid Profile,Lab,3200.0,2059.0,Underpayment,1141.0,2026-02-08
+A580,P1908,Angiography,Cardiology,30000.0,30000.0,Coding Inconsistency,9000.0,2026-01-28
+A581,P1909,CT Brain,Radiology,16000.0,8410.0,Underpayment,7590.0,2025-12-18
+A582,P1910,EEG,Neurology,11000.0,0.0,Claim Not Submitted,11000.0,2026-01-04
+A583,P1912,EEG,Neurology,11000.0,0.0,Claim Not Submitted,11000.0,2026-01-11
+A584,P1914,Abdominal Ultrasound,Radiology,7500.0,7500.0,Coding Inconsistency,2250.0,2026-02-25
+A585,P1916,Liver Panel,Lab,4500.0,4500.0,Coding Inconsistency,1350.0,2025-12-11
+A586,P1917,Angioplasty,Cardiology,60000.0,60000.0,Coding Inconsistency,18000.0,2026-02-16
+A587,P1919,Stress Test,Cardiology,13000.0,0.0,Claim Not Submitted,13000.0,2026-01-17
+A588,P1920,CT Abdomen,Radiology,0.0,0.0,Missing Charge,14449.8,2026-01-22
+A589,P1921,Gallbladder Surgery,Surgery,48000.0,0.0,Claim Not Submitted,48000.0,2026-01-28
+A590,P1923,Sleep Study,Neurology,10000.0,0.0,Denied Claim,10000.0,2026-01-21
+A591,P1925,Knee Surgery,Surgery,55000.0,32554.0,Underpayment,22446.0,2026-01-16
+A592,P1928,Spine MRI,Radiology,24000.0,24000.0,Coding Inconsistency,7200.0,2026-01-09
+A593,P1929,Hernia Repair,Surgery,35000.0,0.0,Claim Not Submitted,35000.0,2025-12-19
+A594,P1930,X-Ray Chest,Radiology,0.0,0.0,Missing Charge,14449.8,2026-02-03
+A595,P1931,Ultrasound,Radiology,8500.0,0.0,Claim Not Submitted,8500.0,2026-01-02
+A596,P1933,Thyroid Test,Lab,1800.0,1800.0,Coding Inconsistency,540.0,2026-03-07
+A597,P1934,Gallbladder Surgery,Surgery,48000.0,18537.0,Underpayment,29463.0,2026-01-27
+A598,P1936,CT Chest,Radiology,0.0,0.0,Missing Charge,14449.8,2026-03-02
+A599,P1938,MRI Brain,Radiology,22000.0,22000.0,Coding Inconsistency,6600.0,2026-01-24
+A600,P1942,Stress Test,Cardiology,13000.0,0.0,Denied Claim,13000.0,2025-12-21
+A601,P1943,Spine MRI,Radiology,24000.0,8109.0,Underpayment,15891.0,2026-01-10
+A602,P1945,Abdominal Ultrasound,Radiology,7500.0,0.0,Denied Claim,7500.0,2026-01-24
+A603,P1946,Colonoscopy,Gastro,0.0,0.0,Missing Charge,17285.71,2025-12-16
+A604,P1949,Pacemaker Implant,Cardiology,80000.0,80000.0,AI Billing Anomaly,16000.0,2026-03-03
+A605,P1950,X-Ray Chest,Radiology,3500.0,2021.0,Underpayment,1479.0,2026-02-24
+A606,P1952,Glucose Test,Lab,1200.0,781.0,Underpayment,419.0,2026-03-03
+A607,P1954,Pacemaker Implant,Cardiology,80000.0,0.0,Denied Claim,80000.0,2026-02-03
+A608,P1956,Angiography,Cardiology,30000.0,0.0,Denied Claim,30000.0,2026-02-12
+A609,P1957,CT Brain,Radiology,16000.0,0.0,Denied Claim,16000.0,2026-02-16
+A610,P1959,Hernia Repair,Surgery,35000.0,0.0,Denied Claim,35000.0,2026-03-05
+A611,P1960,MRI Brain,Radiology,22000.0,0.0,Claim Not Submitted,22000.0,2025-12-31
+A612,P1964,Hernia Repair,Surgery,35000.0,0.0,Denied Claim,35000.0,2026-02-08
+A613,P1965,Endoscopy,Gastro,17000.0,0.0,Claim Not Submitted,17000.0,2025-12-17
+A614,P1966,Gallbladder Surgery,Surgery,0.0,0.0,Missing Charge,44953.95,2025-12-21
+A615,P1967,Nerve Conduction Study,Neurology,0.0,0.0,Missing Charge,10526.6,2026-02-26
+A616,P1968,EEG,Neurology,11000.0,0.0,Claim Not Submitted,11000.0,2026-02-21
+A617,P1969,MRI Brain,Radiology,22000.0,0.0,Claim Not Submitted,22000.0,2026-02-14
+A618,P1970,Endoscopy,Gastro,0.0,0.0,Missing Charge,17285.71,2026-03-04
+A619,P1971,Blood Panel,Lab,2500.0,2500.0,Coding Inconsistency,750.0,2026-02-13
+A620,P1972,Angioplasty,Cardiology,60000.0,0.0,Denied Claim,60000.0,2025-12-23
+A621,P1973,Stress Test,Cardiology,13000.0,0.0,Denied Claim,13000.0,2026-01-18
+A622,P1974,CT Brain,Radiology,16000.0,6038.0,Underpayment,9962.0,2026-02-04
+A623,P1975,Gallbladder Surgery,Surgery,0.0,0.0,Missing Charge,44953.95,2026-02-24
+A624,P1976,Angiography,Cardiology,0.0,0.0,Missing Charge,35968.15,2026-02-02
+A625,P1977,Pacemaker Implant,Cardiology,80000.0,80000.0,AI Billing Anomaly,16000.0,2025-12-17
+A626,P1978,Cardiac Echo,Cardiology,12000.0,0.0,Denied Claim,12000.0,2026-01-18
+A627,P1980,Knee Surgery,Surgery,55000.0,0.0,Claim Not Submitted,55000.0,2025-12-12
+A628,P1981,Cardiac Echo,Cardiology,12000.0,0.0,Denied Claim,12000.0,2025-12-25
+A629,P1982,Blood Culture,Lab,2800.0,2800.0,Coding Inconsistency,840.0,2025-12-29
+A630,P1984,Stress Test,Cardiology,13000.0,13000.0,Coding Inconsistency,3900.0,2026-02-01
+A631,P1986,Pacemaker Implant,Cardiology,0.0,0.0,Missing Charge,35968.15,2026-01-14
+A632,P1987,Thyroid Test,Lab,1800.0,1800.0,Coding Inconsistency,540.0,2026-02-14
+A633,P1989,Sleep Study,Neurology,0.0,0.0,Missing Charge,10526.6,2026-03-09
+A634,P1990,Spine MRI,Radiology,24000.0,10898.0,Underpayment,13102.0,2026-01-09
+A635,P1992,Blood Culture,Lab,2800.0,1590.0,Underpayment,1210.0,2026-01-15
+A636,P1993,Nerve Conduction Study,Neurology,10500.0,4735.0,Underpayment,5765.0,2026-02-20
+A637,P1994,Nerve Conduction Study,Neurology,10500.0,0.0,Denied Claim,10500.0,2026-01-31
+A638,P1995,Blood Panel,Lab,2500.0,0.0,Claim Not Submitted,2500.0,2026-01-27
+A639,P1996,Angioplasty,Cardiology,60000.0,60000.0,AI Billing Anomaly,12000.0,2025-12-27
+A640,P1997,Liver Panel,Lab,4500.0,4500.0,Coding Inconsistency,1350.0,2026-01-06
+A641,P1998,Lipid Profile,Lab,3200.0,1613.0,Underpayment,1587.0,2026-02-02
