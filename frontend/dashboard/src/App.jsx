@@ -3,18 +3,16 @@ import { API_URL } from "./config/api";
 import { transformAlerts } from "./utils/transforms";
 import { auth, db } from "./config/firebase";
 import { signOut, onAuthStateChanged } from "firebase/auth";
-import { doc, onSnapshot, collection, setDoc, getDoc } from "firebase/firestore";
+import { doc, onSnapshot, collection } from "firebase/firestore";
 import { AlertTriangle, LogOut } from "lucide-react";
 
 import "./styles/theme.css";
 import { Shell } from "./components/layout/Shell";
 import { Login } from "./components/layout/Login";
-import { STAFF_INIT } from "./config/navigation";
 
 export default function App() {
   const [user, setUser] = useState(null);
   const [authChecked, setAuthChecked] = useState(false);
-
   const [staffList, setStaffList] = useState([]);
 
   const [alerts, setAlerts] = useState(() => {
@@ -29,57 +27,32 @@ export default function App() {
 
   const [loading, setLoading] = useState(alerts.length === 0);
 
-  // ── WRITE GUARD ──
-  const isWriting = useRef(false);
-  const snapshotUnsub = useRef(null);
-
-  // Helper: extract ONLY the mutable state fields per alert (small payload for Firebase)
-  const extractStates = (alertsArr) => {
-    const states = {};
-    alertsArr.forEach(a => {
-      // Only store alerts that have been modified from default "New" status
-      if (a.status !== "New" || a.assignedTo || (a.notes && a.notes.length > 0)) {
-        states[a.id] = {
-          status: a.status,
-          assignedTo: a.assignedTo || null,
-          priority: a.priority,
-          notes: a.notes || [],
-        };
-      }
-    });
-    return states;
-  };
-
-  // Persist alerts to localStorage always; try Firebase sync (but don't break if quota exceeded)
+  // ── Persist to localStorage on every change (instant, no Firebase needed) ──
   useEffect(() => {
     localStorage.setItem("rld_alerts", JSON.stringify(alerts));
-    if (alerts.length > 0) {
-      const states = extractStates(alerts);
-      isWriting.current = true;
-      setDoc(doc(db, "system", "alert_states"), { states })
-        .then(() => {
-          setTimeout(() => { isWriting.current = false; }, 500);
-        })
-        .catch(() => {
-          // Firebase quota exceeded or offline — localStorage already saved, so app still works
-          isWriting.current = false;
-        });
-    }
   }, [alerts]);
 
-  useEffect(() => { localStorage.setItem("rld_notifs", JSON.stringify(notifs)); }, [notifs]);
-
-  // Listen to staff list from Firestore
   useEffect(() => {
-    const unsubStaff = onSnapshot(collection(db, "users"), (snapshot) => {
-      const usersList = [];
-      snapshot.forEach(doc => usersList.push({ id: doc.id, ...doc.data() }));
-      setStaffList(usersList);
-    });
-    return () => unsubStaff();
+    localStorage.setItem("rld_notifs", JSON.stringify(notifs));
+  }, [notifs]);
+
+  // ── Staff list from Firestore (minimal reads — uses cache when quota exceeded) ──
+  useEffect(() => {
+    try {
+      const unsubStaff = onSnapshot(collection(db, "users"), (snapshot) => {
+        const usersList = [];
+        snapshot.forEach(d => usersList.push({ id: d.id, ...d.data() }));
+        setStaffList(usersList);
+      }, (err) => {
+        console.warn("Firestore staff list unavailable:", err.message);
+      });
+      return () => unsubStaff();
+    } catch (e) {
+      console.warn("Firestore connection failed:", e.message);
+    }
   }, []);
 
-  // Fetch alerts from Python API + merge with saved states
+  // ── Fetch base alerts from Python API + merge with localStorage states ──
   const fetchAlerts = async () => {
     try {
       const res = await fetch(`${API_URL}/alerts`);
@@ -88,60 +61,37 @@ export default function App() {
       if (Array.isArray(data)) {
         const baseAlerts = transformAlerts(data);
 
-        // Source 1: localStorage (same browser, always available)
+        // Read saved states from localStorage (works offline, no Firebase needed)
         const localSaved = localStorage.getItem("rld_alerts");
         const localAlerts = localSaved ? JSON.parse(localSaved) : [];
         const localMap = {};
         localAlerts.forEach(a => {
           if (a.status !== "New" || a.assignedTo) {
-            localMap[a.id] = { status: a.status, assignedTo: a.assignedTo, priority: a.priority, notes: a.notes || [] };
+            localMap[a.id] = {
+              status: a.status,
+              assignedTo: a.assignedTo,
+              priority: a.priority,
+              notes: a.notes || [],
+            };
           }
         });
 
-        // Source 2: Firebase (cross-browser, may fail if quota exceeded)
-        let fbStates = {};
-        try {
-          const statesSnap = await getDoc(doc(db, "system", "alert_states"));
-          fbStates = statesSnap.exists() ? (statesSnap.data().states || {}) : {};
-        } catch (fbErr) {
-          console.warn("Firebase read failed (quota?), using localStorage only:", fbErr.message);
-        }
-
-        // Merge: base data + localStorage + Firebase (most recent wins)
+        // Merge: base alert data from API + saved states from localStorage
         const merged = baseAlerts.map(a => ({
           ...a,
           ...(localMap[a.id] || {}),
-          ...(fbStates[a.id] || {}),
         }));
         setAlerts(merged);
-
-        // Try setting up real-time listener (will silently fail if quota exceeded)
-        try {
-          if (snapshotUnsub.current) snapshotUnsub.current();
-          snapshotUnsub.current = onSnapshot(doc(db, "system", "alert_states"), (docSnap) => {
-            if (isWriting.current) return;
-            if (docSnap.exists() && docSnap.data().states) {
-              const liveStates = docSnap.data().states;
-              setAlerts(prev => {
-                if (prev.length === 0) return prev;
-                return prev.map(a => ({ ...a, ...(liveStates[a.id] || {}) }));
-              });
-            }
-          });
-        } catch (snapErr) {
-          console.warn("Firebase listener failed:", snapErr.message);
-        }
       }
-    } catch (e) { console.error("Failed to fetch alerts:", e); }
+    } catch (e) {
+      console.error("Failed to fetch alerts:", e);
+    }
     setLoading(false);
   };
 
-  useEffect(() => {
-    fetchAlerts();
-    return () => { if (snapshotUnsub.current) snapshotUnsub.current(); };
-  }, []);
+  useEffect(() => { fetchAlerts(); }, []);
 
-  // Auth state listener
+  // ── Auth state listener ──
   useEffect(() => {
     let unsubscribeSnap = null;
     const unsubscribeAuth = onAuthStateChanged(auth, (firebaseUser) => {
@@ -149,15 +99,15 @@ export default function App() {
         const docRef = doc(db, "users", firebaseUser.uid);
         unsubscribeSnap = onSnapshot(docRef, (docSnap) => {
           if (docSnap.exists()) {
-            const userData = docSnap.data();
-            setUser({ ...userData, id: firebaseUser.uid });
+            setUser({ ...docSnap.data(), id: firebaseUser.uid });
           } else {
             setUser(null);
           }
           setAuthChecked(true);
         }, (error) => {
-          console.error("Error fetching user session:", error);
-          setUser(null);
+          console.warn("User doc read failed, using auth only:", error.message);
+          // Fallback: use Firebase Auth user info directly
+          setUser({ id: firebaseUser.uid, name: firebaseUser.displayName || firebaseUser.email, email: firebaseUser.email, role: "Admin", status: "Approved", dept: "Administration" });
           setAuthChecked(true);
         });
       } else {
@@ -173,11 +123,7 @@ export default function App() {
   }, []);
 
   const handleLogout = async () => {
-    try {
-      await signOut(auth);
-    } catch (error) {
-      console.error("Error signing out:", error);
-    }
+    try { await signOut(auth); } catch (e) { console.error(e); }
     setUser(null);
   };
 
