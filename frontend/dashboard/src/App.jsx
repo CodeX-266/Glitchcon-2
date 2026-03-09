@@ -3,7 +3,8 @@ import { API_URL } from "./config/api";
 import { transformAlerts } from "./utils/transforms";
 import { auth, db } from "./config/firebase";
 import { signOut, onAuthStateChanged } from "firebase/auth";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, onSnapshot } from "firebase/firestore";
+import { AlertTriangle, LogOut } from "lucide-react";
 
 import "./styles/theme.css";
 import { Shell } from "./components/layout/Shell";
@@ -53,26 +54,33 @@ export default function App() {
   useEffect(() => { fetchAlerts(); }, []);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+    let unsubscribeSnap = null;
+    const unsubscribeAuth = onAuthStateChanged(auth, (firebaseUser) => {
       if (firebaseUser) {
-        try {
-          const docRef = doc(db, "users", firebaseUser.uid);
-          const docSnap = await getDoc(docRef);
+        const docRef = doc(db, "users", firebaseUser.uid);
+        unsubscribeSnap = onSnapshot(docRef, (docSnap) => {
           if (docSnap.exists()) {
-            setUser({ ...docSnap.data(), id: firebaseUser.uid });
+            const userData = docSnap.data();
+            setUser({ ...userData, id: firebaseUser.uid });
           } else {
             setUser(null);
           }
-        } catch (error) {
+          setAuthChecked(true);
+        }, (error) => {
           console.error("Error fetching user session:", error);
           setUser(null);
-        }
+          setAuthChecked(true);
+        });
       } else {
+        if (unsubscribeSnap) unsubscribeSnap();
         setUser(null);
+        setAuthChecked(true);
       }
-      setAuthChecked(true);
     });
-    return () => unsubscribe();
+    return () => {
+      if (unsubscribeSnap) unsubscribeSnap();
+      unsubscribeAuth();
+    };
   }, []);
 
   const handleLogout = async () => {
@@ -88,7 +96,29 @@ export default function App() {
     return <div className="page" style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "100vh" }}>Loading session...</div>;
   }
 
+  if (user && user.status === "Pending") {
+    return (
+      <div className="lp">
+        <div className="lbox" style={{ maxWidth: 450, textAlign: "center", padding: "40px 30px" }}>
+          <AlertTriangle size={48} color="var(--accent)" style={{ margin: "0 auto 20px" }} />
+          <h2 style={{ fontSize: 24, marginBottom: 10, color: "var(--text)" }}>Waiting for Approval</h2>
+          <p style={{ color: "var(--muted)", lineHeight: 1.5, marginBottom: 30 }}>
+            Your account has been successfully created and is waiting for an Admin to approve your access.
+            This page will automatically refresh once you are approved!
+          </p>
+          <div style={{ display: "flex", justifyContent: "center" }}>
+            <div style={{ width: 30, height: 30, border: "3px solid var(--border)", borderTopColor: "var(--accent)", borderRadius: "50%", animation: "spin 1s linear infinite" }} />
+          </div>
+          <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+          <button onClick={handleLogout} style={{ marginTop: 40, background: "none", border: "none", color: "var(--muted)", textDecoration: "underline", cursor: "pointer", display: "flex", alignItems: "center", gap: 5, margin: "40px auto 0" }}>
+            <LogOut size={14} /> Sign Out
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return user
-    ? <Shell user={user} onLogout={() => setUser(null)} staffList={staffList} setStaffList={setStaffList} alerts={alerts} setAlerts={setAlerts} notifs={notifs} setNotifs={setNotifs} loading={loading} fetchAlerts={fetchAlerts} />
+    ? <Shell user={user} onLogout={handleLogout} staffList={staffList} setStaffList={setStaffList} alerts={alerts} setAlerts={setAlerts} notifs={notifs} setNotifs={setNotifs} loading={loading} fetchAlerts={fetchAlerts} />
     : <Login onLogin={setUser} staffList={staffList} setStaffList={setStaffList} alerts={alerts} setAlerts={setAlerts} />;
 }

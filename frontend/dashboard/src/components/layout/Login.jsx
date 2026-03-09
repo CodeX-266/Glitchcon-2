@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { AlertTriangle } from "lucide-react";
 import { auth, db } from "../../config/firebase";
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, signOut } from "firebase/auth";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 
 export function Login({ onLogin, staffList, setStaffList }) {
@@ -24,10 +24,6 @@ export function Login({ onLogin, staffList, setStaffList }) {
 
             if (docSnap.exists()) {
                 userData = docSnap.data();
-                if (userData.status === "Pending") {
-                    setErr("Your account is pending admin approval.");
-                    return;
-                }
             } else {
                 // New Google user, create a default Staff document
                 userData = {
@@ -43,9 +39,6 @@ export function Login({ onLogin, staffList, setStaffList }) {
 
                 // Add to local state so Admin can see them
                 setStaffList(p => [...p, userData]);
-
-                setErr("New account created and pending admin approval.");
-                return;
             }
 
             onLogin({ ...userData, id: user.uid });
@@ -98,8 +91,9 @@ export function Login({ onLogin, staffList, setStaffList }) {
             await setDoc(doc(db, "users", user.uid), ns);
             setStaffList(p => [...p, ns]);
 
-            setOk("Registration submitted! Waiting for admin approval.");
+            setOk("Registration successful!");
             setRName(""); setREmail(""); setRPass(""); setTab("login");
+            await fetchUserRoleAndLogin(user);
         } catch (error) {
             console.error(error);
             setErr("Registration failed. " + error.message);
@@ -147,6 +141,10 @@ export function Login({ onLogin, staffList, setStaffList }) {
                                 </select>
                             </div>
                             <button className="l-btn staff-btn" onClick={register}>Submit Registration</button>
+                            <button className="l-btn" onClick={attemptGoogle} style={{ background: "white", color: "#333", border: "1px solid #ccc", display: "flex", justifyContent: "center", alignItems: "center", gap: 10, marginTop: 12 }}>
+                                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" style={{ width: 18 }} />
+                                Register with Google
+                            </button>
                             {err && <div className="l-err">{err}</div>}
                             {ok && <div className="l-ok">{ok}</div>}
                         </>
