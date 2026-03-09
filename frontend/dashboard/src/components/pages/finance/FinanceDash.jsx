@@ -79,5 +79,6 @@ export function FinanceDash({ alerts, csvAccess }) {
                     </div>
                 </div>
             </div>
-            );
+        </div>
+    );
 }
