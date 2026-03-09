@@ -1,7 +1,5 @@
-import { useState, useEffect } from "react";
-import { API_URL } from "../../config/api";
-import { NAV, PAGE_TITLES, STAFF_INIT } from "../../config/navigation";
-import { transformAlerts } from "../../utils/transforms";
+import { useState } from "react";
+import { NAV, PAGE_TITLES } from "../../config/navigation";
 import { NotifBell } from "../ui/NotifBell";
 import { AdminDash } from "../pages/admin/AdminDash";
 import { AdminAlertQueue } from "../pages/admin/AdminAlertQueue";
@@ -25,30 +23,9 @@ const ICON_MAP = {
     "work": <ClipboardList size={16} />,
 };
 
-export function Shell({ user, onLogout }) {
-    const [alerts, setAlerts] = useState([]);
-    const [staffList, setStaffList] = useState(STAFF_INIT);
+export function Shell({ user, onLogout, staffList, setStaffList, alerts, setAlerts, notifs, setNotifs, loading, fetchAlerts }) {
     const [csvAccess, setCsvAccess] = useState({ RCM: false, Finance: false });
-    const [notifs, setNotifs] = useState([]);
     const [page, setPage] = useState("dash");
-    const [loading, setLoading] = useState(true);
-
-    const fetchAlerts = async () => {
-        try {
-            const res = await fetch(`${API_URL}/alerts`);
-            const data = await res.json();
-            if (Array.isArray(data)) {
-                setAlerts(prev => {
-                    const statusMap = {};
-                    prev.forEach(a => { statusMap[a.id] = { status: a.status, assignedTo: a.assignedTo, notes: a.notes, priority: a.priority }; });
-                    return transformAlerts(data).map(a => ({ ...a, ...(statusMap[a.id] || {}) }));
-                });
-            }
-        } catch (e) { console.error("Failed to fetch alerts:", e); }
-        setLoading(false);
-    };
-
-    useEffect(() => { fetchAlerts(); }, []);
 
     const addNotif = n => setNotifs(p => [{ ...n, id: Date.now(), read: false }, ...p]);
     const clearNotifs = () => setNotifs([]);
@@ -63,7 +40,7 @@ export function Shell({ user, onLogout }) {
     const title = PAGE_TITLES[page]?.[user.role] || page;
 
     const pages = {
-        dash: user.role === "Admin" ? <AdminDash alerts={alerts} staffList={staffList} /> :
+        dash: user.role === "Admin" ? <AdminDash alerts={alerts} staffList={staffList} csvAccess={csvAccess} setCsvAccess={setCsvAccess} /> :
             user.role === "RCM" ? <RCMDash alerts={alerts} csvAccess={csvAccess} /> :
                 user.role === "Finance" ? <FinanceDash alerts={alerts} csvAccess={csvAccess} /> :
                     <StaffDash currentUser={user} alerts={alerts} />,
@@ -127,7 +104,15 @@ export function Shell({ user, onLogout }) {
                         <div className="ai-pill"><div className="ai-dot" />AI Active</div>
                     </div>
                 </div>
-                {pages[page] || <div className="page"><div className="empty">Page not found</div></div>}
+                {loading ? (
+                    <div className="page" style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "60vh" }}>
+                        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 16 }}>
+                            <div style={{ width: 40, height: 40, border: "3px solid var(--border)", borderTopColor: "var(--accent)", borderRadius: "50%", animation: "spin 1s linear infinite" }} />
+                            <div style={{ color: "var(--muted)", fontWeight: 500, fontFamily: "var(--mono)", fontSize: 13, letterSpacing: 1 }}>FETCHING AI ANALYSIS...</div>
+                            <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+                        </div>
+                    </div>
+                ) : pages[page] || <div className="page"><div className="empty">Page not found</div></div>}
             </div>
         </div>
     );

@@ -28,13 +28,3 @@ export function transformAlerts(apiAlerts) {
     });
 }
 
-export function buildDeptData(alerts) {
-    const map = {};
-    alerts.forEach(a => {
-        if (!map[a.dept]) map[a.dept] = { dept: a.dept, alerts: 0, loss: 0, recovered: 0 };
-        map[a.dept].alerts++;
-        map[a.dept].loss += a.loss;
-        if (["Resolved", "Verified", "Closed"].includes(a.status)) map[a.dept].recovered += a.loss;
-    });
-    return Object.values(map);
-}

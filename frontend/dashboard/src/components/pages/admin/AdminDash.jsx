@@ -2,7 +2,7 @@ import { SBadge } from "../../ui/Badge";
 import { HBar } from "../../ui/Charts";
 import { AlertTriangle, CheckCircle, Clock, TrendingUp } from "lucide-react";
 
-export function AdminDash({ alerts, staffList }) {
+export function AdminDash({ alerts, staffList, csvAccess, setCsvAccess }) {
     const open = alerts.filter(a => ["New", "Assigned", "In Progress"].includes(a.status)).length;
     const res = alerts.filter(a => ["Resolved", "Verified", "Closed"].includes(a.status)).length;
     const loss = alerts.reduce((s, a) => s + a.loss, 0);
@@ -74,6 +74,21 @@ export function AdminDash({ alerts, staffList }) {
                             <SBadge s={s} />
                         </div>
                     ))}
+                </div>
+            </div>
+
+            <div className="card" style={{ marginTop: 24 }}>
+                <div className="ct">Data & Export Access</div>
+                <div style={{ fontSize: 13, color: "var(--muted)", marginBottom: 16 }}>Control which departments can download the combined CSV dataset for analytics tools.</div>
+                <div style={{ display: "flex", gap: 32, padding: "8px 0" }}>
+                    <label style={{ display: "flex", alignItems: "center", gap: 10, cursor: "pointer" }}>
+                        <input type="checkbox" checked={csvAccess.RCM} onChange={e => setCsvAccess(p => ({ ...p, RCM: e.target.checked }))} style={{ width: 18, height: 18, accentColor: "var(--adm)" }} />
+                        <span style={{ fontWeight: 600, fontSize: 14 }}>RCM Team</span>
+                    </label>
+                    <label style={{ display: "flex", alignItems: "center", gap: 10, cursor: "pointer" }}>
+                        <input type="checkbox" checked={csvAccess.Finance} onChange={e => setCsvAccess(p => ({ ...p, Finance: e.target.checked }))} style={{ width: 18, height: 18, accentColor: "var(--adm)" }} />
+                        <span style={{ fontWeight: 600, fontSize: 14 }}>Finance Team</span>
+                    </label>
                 </div>
             </div>
         </div>

@@ -71,7 +71,7 @@ def run_analysis():
 def get_alerts():
 
     if not os.path.exists(ALERT_PATH):
-        return {"message": "No alerts generated yet"}
+        return []
 
     df = pd.read_csv(ALERT_PATH)
 

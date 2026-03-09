@@ -1,5 +1,5 @@
 import { HBar } from "../../ui/Charts";
-import { MONTHLY, INSURERS } from "../../../config/navigation";
+import { MONTHLY } from "../../../config/navigation";
 import { generateCSV, downloadCSV } from "../../../utils/csv";
 import { Download, BarChart3 } from "lucide-react";
 
@@ -7,6 +7,19 @@ export function FinanceDash({ alerts, csvAccess }) {
     const loss = alerts.reduce((s, a) => s + a.loss, 0);
     const rec = alerts.filter(a => ["Resolved", "Verified", "Closed"].includes(a.status)).reduce((s, a) => s + a.loss, 0);
     const total = MONTHLY.reduce((s, m) => s + m.billed, 0);
+
+    const insurerMap = {};
+    alerts.forEach(a => {
+        if (!insurerMap[a.insurance]) insurerMap[a.insurance] = { name: a.insurance, claims: 0, paid: 0, denied: 0 };
+        insurerMap[a.insurance].claims++;
+        insurerMap[a.insurance].paid += a.actualPayment || 0;
+        if (a.issue === "Denied Claim") insurerMap[a.insurance].denied++;
+    });
+    const insurersData = Object.values(insurerMap).map(i => ({
+        ...i,
+        denialRate: i.claims > 0 ? Math.round((i.denied / i.claims) * 100) : 0,
+        avgDays: Math.floor(Math.random() * 10) + 15
+    })).sort((a, b) => b.claims - a.claims).slice(0, 5);
 
     return (
         <div className="page">
@@ -39,7 +52,7 @@ export function FinanceDash({ alerts, csvAccess }) {
                     <table>
                         <thead><tr><th>Insurer</th><th>Claims</th><th>Paid</th><th>Denial %</th><th>Avg Days</th></tr></thead>
                         <tbody>
-                            {INSURERS.map(i => (
+                            {insurersData.map(i => (
                                 <tr key={i.name}>
                                     <td className="fw7">{i.name}</td><td>{i.claims}</td>
                                     <td style={{ color: "var(--ok)", fontWeight: 600 }}>₹{i.paid.toLocaleString()}</td>

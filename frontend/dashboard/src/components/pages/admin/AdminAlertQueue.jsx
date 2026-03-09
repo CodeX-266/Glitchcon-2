@@ -23,7 +23,7 @@ export function AdminAlertQueue({ alerts, setAlerts, staffList, addNotif }) {
     const assign = id => {
         if (!assignTo) return;
         const staff = approved.find(s => s.id === assignTo);
-        setAlerts(p => p.map(a => a.id === id ? { ...a, status: "Assigned", assignedTo, priority: prio } : a));
+        setAlerts(p => p.map(a => a.id === id ? { ...a, status: "Assigned", assignedTo: assignTo, priority: prio } : a));
         addNotif({ type: "alert_assigned", title: "Alert Assigned", message: `${sel.id} assigned to ${staff?.name} (${prio} priority)`, time: "Just now" });
         setSel(null);
     };

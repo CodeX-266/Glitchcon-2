@@ -1,15 +1,14 @@
 import { useState } from "react";
-import { USERS_INIT, STAFF_INIT } from "../../config/navigation";
+import { USERS_INIT } from "../../config/navigation";
 import { AlertTriangle } from "lucide-react";
 
-export function Login({ onLogin }) {
+export function Login({ onLogin, staffList, setStaffList }) {
     const [tab, setTab] = useState("login");
     const [email, setEmail] = useState("");
     const [pass, setPass] = useState("");
     const [err, setErr] = useState("");
     const [ok, setOk] = useState("");
     const [allUsers] = useState(USERS_INIT);
-    const [allStaff, setAllStaff] = useState(STAFF_INIT);
 
     const [rName, setRName] = useState("");
     const [rEmail, setREmail] = useState("");
@@ -20,7 +19,7 @@ export function Login({ onLogin }) {
         setErr("");
         const u = allUsers.find(u => u.email === email && u.password === pass);
         if (u) { onLogin(u); return; }
-        const s = allStaff.find(s => s.email === email && s.password === pass);
+        const s = staffList.find(s => s.email === email && s.password === pass);
         if (s) {
             if (s.status === "Pending") { setErr("Your account is pending admin approval."); return; }
             onLogin({ ...s, dept: s.dept });
@@ -32,9 +31,9 @@ export function Login({ onLogin }) {
     const register = () => {
         setErr("");
         if (!rName || !rEmail || !rPass) { setErr("All fields are required."); return; }
-        if (allStaff.find(s => s.email === rEmail) || allUsers.find(u => u.email === rEmail)) { setErr("Email already registered."); return; }
+        if (staffList.find(s => s.email === rEmail) || allUsers.find(u => u.email === rEmail)) { setErr("Email already registered."); return; }
         const ns = { id: `s${Date.now()}`, name: rName, email: rEmail, password: rPass, role: "Staff", dept: rDept, status: "Pending", registered: new Date().toISOString().split("T")[0], assignedAlerts: [], completedAlerts: [] };
-        setAllStaff(p => [...p, ns]);
+        setStaffList(p => [...p, ns]);
         setOk("Registration submitted! Waiting for admin approval.");
         setRName(""); setREmail(""); setRPass(""); setTab("login");
     };
