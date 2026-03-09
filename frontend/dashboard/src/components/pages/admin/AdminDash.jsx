@@ -1,11 +1,61 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { SBadge, PBadge } from "../../ui/Badge";
-import { CheckCircle, Zap, ShieldCheck, Check, X, Database, Users, LayoutList, AlertTriangle } from "lucide-react";
+import { CheckCircle, Zap, ShieldCheck, Check, X, Database, Users, LayoutList, AlertTriangle, Upload, FileSpreadsheet, RefreshCw } from "lucide-react";
+import { API_URL } from "../../../config/api";
 import toast from "react-hot-toast";
 
-export function AdminDash({ alerts, setAlerts, staffList, csvAccess, setCsvAccess, addNotif }) {
+export function AdminDash({ alerts, setAlerts, staffList, csvAccess, setCsvAccess, addNotif, fetchAlerts }) {
     const [viewLimit, setViewLimit] = useState(100);
     const [filter, setFilter] = useState("All");
+    const [uploading, setUploading] = useState(false);
+    const [uploadStatus, setUploadStatus] = useState(null); // null | 'uploaded' | 'analyzing' | 'done' | 'error'
+    const [fileName, setFileName] = useState("");
+    const fileRef = useRef(null);
+
+    const handleCSVUpload = async (file) => {
+        if (!file || !file.name.endsWith(".csv")) {
+            toast.error("Please upload a .csv file", { style: { background: "var(--bg)", color: "var(--text)", border: "1px solid var(--danger)" } });
+            return;
+        }
+        setUploading(true);
+        setFileName(file.name);
+        setUploadStatus("uploaded");
+
+        try {
+            // Step 1: Upload CSV
+            const formData = new FormData();
+            formData.append("file", file);
+            const uploadRes = await fetch(`${API_URL}/upload-data`, { method: "POST", body: formData });
+            if (!uploadRes.ok) throw new Error("Upload failed");
+
+            setUploadStatus("analyzing");
+            toast.loading("Running AI analysis on new dataset...", { id: "csv-analyze" });
+
+            // Step 2: Run AI analysis
+            const analyzeRes = await fetch(`${API_URL}/run-analysis`, { method: "POST" });
+            const analyzeData = await analyzeRes.json();
+
+            toast.dismiss("csv-analyze");
+
+            // Step 3: Clear old states & refetch
+            localStorage.removeItem("rld_alerts");
+            try { await fetch(`${API_URL}/states`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({}) }); } catch (e) { }
+            if (fetchAlerts) await fetchAlerts();
+
+            setUploadStatus("done");
+            setUploading(false);
+            toast.success(`✨ Analysis complete! ${analyzeData.total_alerts} alerts detected · ₹${(analyzeData.total_revenue_loss / 1000).toFixed(0)}K leakage found`, {
+                duration: 5000, style: { background: "var(--bg)", color: "var(--text)", border: "1px solid var(--ok)" }
+            });
+            if (addNotif) addNotif({ type: "csv_upload", title: "New Dataset Loaded", message: `${file.name} → ${analyzeData.total_alerts} alerts · ₹${(analyzeData.total_revenue_loss / 1000).toFixed(0)}K leakage`, time: "Just now" });
+        } catch (e) {
+            console.error("CSV upload error:", e);
+            setUploadStatus("error");
+            setUploading(false);
+            toast.dismiss("csv-analyze");
+            toast.error("Upload or analysis failed: " + e.message, { style: { background: "var(--bg)", color: "var(--text)", border: "1px solid var(--danger)" } });
+        }
+    };
 
     const loss = alerts.reduce((s, a) => s + a.loss, 0);
     const unassigned = alerts.filter(a => a.status === "New").length;
@@ -316,6 +366,72 @@ export function AdminDash({ alerts, setAlerts, staffList, csvAccess, setCsvAcces
                                 <span style={{ fontWeight: 700, fontSize: 14 }}>{approvedStaff.length} active</span>
                             </div>
                         </div>
+                    </div>
+
+                    {/* CSV UPLOAD */}
+                    <div className="card" style={{ border: "1px solid rgba(99, 102, 241, 0.3)", background: "linear-gradient(180deg, rgba(99, 102, 241, 0.06) 0%, rgba(0,0,0,0) 120px)" }}>
+                        <div className="ct" style={{ display: "flex", gap: 8, alignItems: "center", borderBottom: "1px solid var(--border)", paddingBottom: 12, marginBottom: 14 }}>
+                            <FileSpreadsheet size={18} style={{ color: "var(--accent)" }} />
+                            <span>Upload New Dataset</span>
+                        </div>
+                        <p style={{ fontSize: 12, color: "var(--muted)", marginBottom: 14, lineHeight: 1.5 }}>
+                            Replace the billing CSV with a new dataset. The AI engine will re-analyze and generate fresh alerts.
+                        </p>
+
+                        <div
+                            onClick={() => !uploading && fileRef.current?.click()}
+                            onDragOver={e => { e.preventDefault(); e.currentTarget.style.borderColor = "var(--accent)"; }}
+                            onDragLeave={e => { e.currentTarget.style.borderColor = "var(--border)"; }}
+                            onDrop={e => { e.preventDefault(); e.currentTarget.style.borderColor = "var(--border)"; const f = e.dataTransfer.files[0]; if (f) handleCSVUpload(f); }}
+                            style={{
+                                border: "2px dashed var(--border)", borderRadius: 10, padding: "24px 16px", textAlign: "center",
+                                cursor: uploading ? "wait" : "pointer", transition: "all 0.3s",
+                                background: uploadStatus === "done" ? "rgba(16, 185, 129, 0.06)" : uploadStatus === "error" ? "rgba(239, 68, 68, 0.06)" : "rgba(0,0,0,0.1)",
+                            }}
+                        >
+                            <input ref={fileRef} type="file" accept=".csv" style={{ display: "none" }} onChange={e => { if (e.target.files[0]) handleCSVUpload(e.target.files[0]); }} />
+
+                            {!uploadStatus && (
+                                <>
+                                    <Upload size={28} style={{ color: "var(--muted)", marginBottom: 8 }} />
+                                    <div style={{ fontSize: 13, fontWeight: 600, color: "var(--text)" }}>Drop CSV here or click to browse</div>
+                                    <div style={{ fontSize: 11, color: "var(--muted)", marginTop: 4 }}>Accepts .csv billing data files</div>
+                                </>
+                            )}
+
+                            {uploadStatus === "uploaded" && (
+                                <>
+                                    <RefreshCw size={24} style={{ color: "var(--accent)", animation: "spin 1s linear infinite" }} />
+                                    <div style={{ fontSize: 13, fontWeight: 600, marginTop: 8 }}>Uploading {fileName}...</div>
+                                </>
+                            )}
+
+                            {uploadStatus === "analyzing" && (
+                                <>
+                                    <RefreshCw size={24} style={{ color: "var(--warn)", animation: "spin 1s linear infinite" }} />
+                                    <div style={{ fontSize: 13, fontWeight: 600, marginTop: 8, color: "var(--warn)" }}>AI Engine analyzing...</div>
+                                    <div style={{ fontSize: 11, color: "var(--muted)", marginTop: 4 }}>Detecting revenue leakage patterns</div>
+                                </>
+                            )}
+
+                            {uploadStatus === "done" && (
+                                <>
+                                    <CheckCircle size={28} style={{ color: "var(--ok)" }} />
+                                    <div style={{ fontSize: 13, fontWeight: 700, marginTop: 8, color: "var(--ok)" }}>Analysis Complete!</div>
+                                    <div style={{ fontSize: 11, color: "var(--muted)", marginTop: 4 }}>{fileName} loaded · Alerts refreshed</div>
+                                    <button className="btn btn-sm" onClick={(e) => { e.stopPropagation(); setUploadStatus(null); setFileName(""); }} style={{ marginTop: 10, fontSize: 11 }}>Upload Another</button>
+                                </>
+                            )}
+
+                            {uploadStatus === "error" && (
+                                <>
+                                    <AlertTriangle size={28} style={{ color: "var(--danger)" }} />
+                                    <div style={{ fontSize: 13, fontWeight: 700, marginTop: 8, color: "var(--danger)" }}>Upload Failed</div>
+                                    <button className="btn btn-sm" onClick={(e) => { e.stopPropagation(); setUploadStatus(null); setFileName(""); }} style={{ marginTop: 10, fontSize: 11 }}>Try Again</button>
+                                </>
+                            )}
+                        </div>
+                        <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
                     </div>
 
                     {/* DATA ACCESS */}

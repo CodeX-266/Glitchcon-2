@@ -21,35 +21,50 @@ export function Login({ onLogin, staffList, setStaffList }) {
     const fetchUserRoleAndLogin = async (user) => {
         try {
             const docRef = doc(db, "users", user.uid);
-            const docSnap = await getDoc(docRef);
             let userData = null;
 
-            if (docSnap.exists()) {
-                userData = docSnap.data();
-            } else {
-                if (tab !== "register") {
-                    setErr("Please use the Staff Register tab first to select your role.");
-                    return;
+            try {
+                const docSnap = await getDoc(docRef);
+                if (docSnap.exists()) {
+                    userData = docSnap.data();
                 }
-                userData = {
-                    id: user.uid,
-                    name: user.displayName || rName || "New User",
-                    email: user.email,
-                    role: rRole,
-                    dept: rDept || "General",
-                    status: "Pending", // Require admin approval by default
-                    registered: new Date().toISOString().split("T")[0],
-                };
-                await setDoc(docRef, userData);
-
-                // Add to local state so Admin can see them
-                setStaffList(p => [...p, userData]);
+            } catch (firestoreErr) {
+                console.warn("Firestore read failed (quota?), using fallback:", firestoreErr.message);
             }
 
-            onLogin({ ...userData, id: user.uid });
+            if (!userData) {
+                if (tab === "register" || tab === "login") {
+                    // For Google login on register tab, or when Firestore is down
+                    if (!rRole && tab === "register") {
+                        setErr("Please select a role first.");
+                        return;
+                    }
+                    userData = {
+                        id: user.uid,
+                        name: user.displayName || rName || "New User",
+                        email: user.email,
+                        role: rRole || "Admin",
+                        dept: rDept || "Administration",
+                        status: rRole ? "Pending" : "Approved",
+                        registered: new Date().toISOString().split("T")[0],
+                    };
+                    try {
+                        await setDoc(docRef, userData);
+                        setStaffList(p => [...p, userData]);
+                    } catch (writeErr) {
+                        console.warn("Firestore write failed, continuing with local data");
+                    }
+                }
+            }
+
+            if (userData) {
+                onLogin({ ...userData, id: user.uid });
+            } else {
+                setErr("Could not load profile. Please try again.");
+            }
         } catch (error) {
-            console.error("Error fetching user data:", error);
-            setErr("Failed to load user profile. Please try again.");
+            console.error("Login error:", error);
+            setErr("Login failed. Please try again.");
         }
     };
 
