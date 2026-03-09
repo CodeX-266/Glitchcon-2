@@ -12,7 +12,7 @@ import { FinanceDash } from "../pages/finance/FinanceDash";
 import { FinanceReports } from "../pages/finance/FinanceReports";
 import { StaffDash } from "../pages/staff/StaffDash";
 import { StaffMyWork } from "../pages/staff/StaffMyWork";
-import { LayoutDashboard, AlertTriangle, Cpu, Users, Inbox, BarChart3, ClipboardList, LogOut, CheckCircle, X } from "lucide-react";
+import { LayoutDashboard, AlertTriangle, Cpu, Users, Inbox, BarChart3, ClipboardList, LogOut, CheckCircle, X, Sun, Moon } from "lucide-react";
 
 const ICON_MAP = {
     "dash": <LayoutDashboard size={16} />,
@@ -27,8 +27,14 @@ const ICON_MAP = {
 export function Shell({ user, onLogout, staffList, setStaffList, alerts, setAlerts, notifs, setNotifs, loading, fetchAlerts }) {
     const [csvAccess, setCsvAccess] = useState({ RCM: false, Finance: false });
     const [page, setPage] = useState("dash");
+    const [theme, setTheme] = useState(() => localStorage.getItem("rld_theme") || "dark");
     const prevMyTasks = useRef(0);
     const prevWorkDone = useRef(0);
+
+    useEffect(() => {
+        localStorage.setItem("rld_theme", theme);
+        document.body.setAttribute('data-theme', theme);
+    }, [theme]);
 
     const addNotif = n => setNotifs(p => [{ ...n, id: Date.now(), read: false }, ...p]);
     const clearNotifs = () => setNotifs([]);
@@ -129,6 +135,9 @@ export function Shell({ user, onLogout, staffList, setStaffList, alerts, setAler
                                 <CheckCircle size={12} /> {workDone} task{workDone > 1 ? "s" : ""} done
                             </div>
                         )}
+                        <button onClick={() => setTheme(t => t === 'dark' ? 'light' : 'dark')} className="sb-out" style={{ margin: 0, background: "var(--s1)", color: "var(--muted)", width: 34, height: 34, display: "flex", alignItems: "center", justifyContent: "center", borderRadius: "17px", cursor: "pointer" }}>
+                            {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
+                        </button>
                         <NotifBell notifications={notifs} onClear={clearNotifs} />
                         <div className="ai-pill"><div className="ai-dot" />AI Active</div>
                     </div>
