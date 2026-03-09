@@ -3,6 +3,7 @@ import { AlertTriangle } from "lucide-react";
 import { auth, db } from "../../config/firebase";
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, signOut } from "firebase/auth";
 import { doc, getDoc, setDoc } from "firebase/firestore";
+import { Toaster, toast } from "react-hot-toast";
 
 export function Login({ onLogin, staffList, setStaffList }) {
     const [tab, setTab] = useState("login");
@@ -14,7 +15,7 @@ export function Login({ onLogin, staffList, setStaffList }) {
     const [rName, setRName] = useState("");
     const [rEmail, setREmail] = useState("");
     const [rPass, setRPass] = useState("");
-    const [rRole, setRRole] = useState("Medical Coding");
+    const [rRole, setRRole] = useState("");
     const [rDept, setRDept] = useState("Radiology");
 
     const fetchUserRoleAndLogin = async (user) => {
@@ -65,6 +66,12 @@ export function Login({ onLogin, staffList, setStaffList }) {
 
     const attemptGoogle = async () => {
         setErr("");
+        if (tab === "register" && !rRole) {
+            toast.error("You must select a Role before continuing with Google.", {
+                icon: '⚠️', style: { border: '1px solid #777', color: '#111', fontWeight: 600 }
+            });
+            return;
+        }
         const provider = new GoogleAuthProvider();
         try {
             const result = await signInWithPopup(auth, provider);
@@ -78,6 +85,12 @@ export function Login({ onLogin, staffList, setStaffList }) {
     const register = async () => {
         setErr("");
         if (!rName || !rEmail || !rPass) { setErr("All fields are required."); return; }
+        if (!rRole) {
+            toast.error("Wait! Please select a Role from the dropdown.", {
+                icon: '🛑', style: { border: '1px solid #777', color: '#111', fontWeight: 600 }
+            });
+            return;
+        }
         try {
             const userCredential = await createUserWithEmailAndPassword(auth, rEmail, rPass);
             const user = userCredential.user;
@@ -106,6 +119,7 @@ export function Login({ onLogin, staffList, setStaffList }) {
 
     return (
         <div className="lp">
+            <Toaster position="bottom-right" />
             <div className="lbox">
                 <div className="lbox-top">
                     <div className="l-chip"><i />Hospital Analytics Platform</div>
@@ -141,6 +155,7 @@ export function Login({ onLogin, staffList, setStaffList }) {
                             <div className="lf"><label>Password</label><input type="password" value={rPass} onChange={e => setRPass(e.target.value)} placeholder="Choose a secure password" /></div>
                             <div className="lf"><label>Role</label>
                                 <select className="sel" value={rRole} onChange={e => setRRole(e.target.value)}>
+                                    <option value="" disabled>— Select your specific role —</option>
                                     {["Revenue Department", "Medical Coding", "Insurance Claims"].map(r => <option key={r} value={r}>{r}</option>)}
                                 </select>
                             </div>
