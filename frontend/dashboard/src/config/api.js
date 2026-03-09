@@ -1,4 +1,4 @@
-export const API_URL = "http://localhost:8000";
+export const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
 export const CPT_MAP = {
     "MRI Brain": "70553", "Blood Panel": "80050", "CT Abdomen": "74178", "Cardiac Echo": "93306",
