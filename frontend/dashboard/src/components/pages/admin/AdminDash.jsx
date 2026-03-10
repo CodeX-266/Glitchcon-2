@@ -22,6 +22,11 @@ export function AdminDash({ alerts, setAlerts, staffList, csvAccess, setCsvAcces
         setUploadStatus("uploaded");
 
         try {
+            // Step 0: Clear old states immediately so UI resets and auto-assign doesn't carry over
+            setAlerts([]);
+            localStorage.removeItem("rld_alerts");
+            try { await fetch(`${API_URL}/states`, { method: "DELETE" }); } catch (e) { }
+
             // Step 1: Upload CSV
             const formData = new FormData();
             formData.append("file", file);
@@ -37,7 +42,7 @@ export function AdminDash({ alerts, setAlerts, staffList, csvAccess, setCsvAcces
 
             toast.dismiss("csv-analyze");
 
-            // Step 3: Clear old states & refetch
+            // Step 3: Ensure states are clean, then refetch new alerts
             localStorage.removeItem("rld_alerts");
             try { await fetch(`${API_URL}/states`, { method: "DELETE" }); } catch (e) { }
             if (fetchAlerts) await fetchAlerts();
