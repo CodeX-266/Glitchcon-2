@@ -13,7 +13,7 @@ import { FinanceDash } from "../pages/finance/FinanceDash";
 import { FinanceReports } from "../pages/finance/FinanceReports";
 import { StaffDash } from "../pages/staff/StaffDash";
 import { StaffMyWork } from "../pages/staff/StaffMyWork";
-import { LayoutDashboard, AlertTriangle, Cpu, Users, Inbox, BarChart3, ClipboardList, LogOut, CheckCircle, X, Sun, Moon } from "lucide-react";
+import { LayoutDashboard, AlertTriangle, Cpu, Users, Inbox, BarChart3, ClipboardList, LogOut, CheckCircle, X, Sun, Moon, Search } from "lucide-react";
 
 const ICON_MAP = {
     "dash": <LayoutDashboard size={16} />,
@@ -28,6 +28,7 @@ const ICON_MAP = {
 export function Shell({ user, onLogout, staffList, setStaffList, alerts, setAlerts, notifs, setNotifs, loading, fetchAlerts }) {
     const [csvAccess, setCsvAccess] = useState({ RCM: false, Finance: false });
     const [page, setPage] = useState("dash");
+    const [cptSearch, setCptSearch] = useState("");
     const [theme, setTheme] = useState(() => localStorage.getItem("rld_theme") || "dark");
     const prevMyTasks = useRef(0);
     const prevWorkDone = useRef(0);
@@ -118,13 +119,30 @@ export function Shell({ user, onLogout, staffList, setStaffList, alerts, setAler
                             <div className="nav-sec" style={{ paddingLeft: 16, marginBottom: 8, display: "flex", alignItems: "center", gap: 6 }}>
                                 <ClipboardList size={14} /> Medical CPT Codes
                             </div>
+
+                            <div style={{ padding: "0 16px", marginBottom: 10 }}>
+                                <div className="si-wrap" style={{ display: "flex", alignItems: "center", background: "rgba(0,0,0,0.15)", border: "1px solid var(--border)", borderRadius: 6, padding: "4px 8px" }}>
+                                    <Search size={14} style={{ color: "var(--muted)", marginRight: 6 }} />
+                                    <input
+                                        type="text"
+                                        placeholder="Search code or desc..."
+                                        value={cptSearch}
+                                        onChange={(e) => setCptSearch(e.target.value)}
+                                        style={{ background: "transparent", border: "none", color: "var(--text)", outline: "none", fontSize: 11, width: "100%", padding: "4px 0" }}
+                                    />
+                                </div>
+                            </div>
+
                             <div style={{
-                                maxHeight: 180, overflowY: "auto", margin: "0 16px",
+                                maxHeight: 250, overflowY: "auto", margin: "0 16px",
                                 background: "rgba(0,0,0,0.15)", border: "1px solid var(--border)",
                                 borderRadius: 8, padding: "6px 10px"
                             }} className="tw">
                                 <style>{`.tw::-webkit-scrollbar { width: 4px; } .tw::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }`}</style>
-                                {Object.entries(CPT_MAP).map(([proc, code]) => (
+                                {Object.entries(CPT_MAP).filter(([proc, code]) =>
+                                    proc.toLowerCase().includes(cptSearch.toLowerCase()) ||
+                                    code.toLowerCase().includes(cptSearch.toLowerCase())
+                                ).map(([proc, code]) => (
                                     <div key={proc} style={{
                                         display: "flex", justifyContent: "space-between", alignItems: "center",
                                         padding: "6px 0", borderBottom: "1px solid rgba(255,255,255,0.03)",
@@ -134,6 +152,12 @@ export function Shell({ user, onLogout, staffList, setStaffList, alerts, setAler
                                         <strong style={{ color: "var(--nav-text)", fontFamily: "var(--mono)", background: "rgba(255,255,255,0.05)", padding: "2px 6px", borderRadius: 4 }}>{code}</strong>
                                     </div>
                                 ))}
+                                {Object.keys(CPT_MAP).filter((proc) =>
+                                    proc.toLowerCase().includes(cptSearch.toLowerCase()) ||
+                                    CPT_MAP[proc].toLowerCase().includes(cptSearch.toLowerCase())
+                                ).length === 0 && (
+                                        <div style={{ textAlign: "center", fontSize: 11, color: "var(--muted)", padding: "10px 0" }}>No codes found</div>
+                                    )}
                             </div>
                         </div>
                     )}
