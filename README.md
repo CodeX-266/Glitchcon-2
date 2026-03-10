@@ -22,7 +22,7 @@ Manual auditing of these issues is time-consuming and inefficient.
 
 ---
 
-## 💡 Solution
+##  Solution
 
 We developed an AI-powered Revenue Leakage Detection System that proactively recovers lost revenue. The system:
 - **Analyzes** healthcare billing and claims data
@@ -36,7 +36,7 @@ The system provides robust dashboards and analytics to help hospitals seamlessly
 
 ---
 
-## ✨ Key Features
+##  Key Features
 
 - **Missing Charge Detection**
 - **CPT/ICD Coding Consistency Validation**
@@ -147,7 +147,7 @@ Navigate to your browser and open:
 
 ---
 
-## 🔮 Future Improvements
+##  Future Improvements
 
 - [ ] Integration with real hospital EHR systems
 - [ ] Real-time claim monitoring
@@ -157,13 +157,13 @@ Navigate to your browser and open:
 
 ---
 
-## 📹 Presentation
+##  Presentation
 
 - [Click here to view our Presentation](https://docs.google.com/presentation/d/1rLfpQy2Ru2wo2qU4EkyhsTcixhKrPjqK/edit?usp=drive_link&ouid=109896952518917091453&rtpof=true&sd=true)
 
 ---
 
-## 👥 Team Members
+##  Team Members
 
 - **Adarsh Kumar Mishra** — 24BYB1015
 - **Krish Dagar** — 24BCE1845
