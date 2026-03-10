@@ -159,7 +159,7 @@ Navigate to your browser and open:
 
 ## 📹 Presentation
 
-- [https://docs.google.com/presentation/d/1rLfpQy2Ru2wo2qU4EkyhsTcixhKrPjqK/edit?usp=drive_link&ouid=109896952518917091453&rtpof=true&sd=true](#) *(Replace with actual link)*
+- [Click here to view our Presentation](https://docs.google.com/presentation/d/1rLfpQy2Ru2wo2qU4EkyhsTcixhKrPjqK/edit?usp=drive_link&ouid=109896952518917091453&rtpof=true&sd=true)
 
 ---
 
