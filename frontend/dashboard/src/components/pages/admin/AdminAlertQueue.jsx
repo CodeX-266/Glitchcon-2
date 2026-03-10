@@ -17,7 +17,12 @@ export function AdminAlertQueue({ alerts, setAlerts, staffList, addNotif }) {
     const [prio, setPrio] = useState("High");
     const [filter, setFilter] = useState("All");
     const approved = staffList.filter(s => s.status === "Approved");
-    const filtered = filter === "All" ? alerts : alerts.filter(a => a.status === filter || a.priority === filter);
+
+    const filtered = filter === "All" ? alerts
+        : filter === "In Progress" ? alerts.filter(a => ["Assigned", "In Progress"].includes(a.status))
+            : filter === "Resolved" ? alerts.filter(a => ["Verified", "Closed", "Resolved"].includes(a.status))
+                : ["Critical", "High"].includes(filter) ? alerts.filter(a => a.priority === filter)
+                    : alerts.filter(a => a.status === filter);
     const getStaff = id => approved.find(s => s.id === id)?.name || "—";
 
     const assign = id => {

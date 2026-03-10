@@ -12,7 +12,14 @@ const ICON_MAP = {
 
 export function StaffMyWork({ currentUser, alerts, setAlerts, addNotif }) {
     const [note, setNote] = useState({});
-    const mine = alerts.filter(a => a.assignedTo === currentUser.id);
+    const [filter, setFilter] = useState("In Progress");
+
+    let mine = alerts.filter(a => a.assignedTo === currentUser.id);
+    if (filter === "In Progress") {
+        mine = mine.filter(a => ["Assigned", "In Progress"].includes(a.status));
+    } else if (filter === "Work Done") {
+        mine = mine.filter(a => ["Work Done", "Verified", "Closed", "Resolved"].includes(a.status));
+    }
 
     const markDone = id => {
         const alert = alerts.find(a => a.id === id);
@@ -34,8 +41,14 @@ export function StaffMyWork({ currentUser, alerts, setAlerts, addNotif }) {
 
     return (
         <div className="page">
-            {mine.length === 0 && <div className="empty"><div className="empty-ico"><Inbox size={28} /></div>No tasks assigned. Admin will assign work to you.</div>}
-            {mine.map(a => (
+            <div className="frow" style={{ marginBottom: 20 }}>
+                {["In Progress", "Work Done", "All"].map(f => (
+                    <button key={f} className={`fb${filter === f ? " on" : ""}`} onClick={() => setFilter(f)}>{f}</button>
+                ))}
+            </div>
+            {mine.length === 0 ? (
+                <div className="empty"><div className="empty-ico"><Inbox size={28} /></div>No tasks found for "{filter}".</div>
+            ) : mine.map(a => (
                 <div key={a.id} className={`task-card ${a.status === "Work Done" ? "done" : ""}`} style={{ borderLeft: `3px solid ${a.status === "Work Done" ? "var(--ok)" : a.priority === "Critical" ? "var(--danger)" : a.priority === "High" ? "var(--warn)" : "var(--info)"}` }}>
                     <div className="task-head">
                         <span className="task-id">{a.id}</span>
