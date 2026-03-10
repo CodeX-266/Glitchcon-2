@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Toaster, toast } from 'react-hot-toast';
 import { NAV, PAGE_TITLES } from "../../config/navigation";
-import { CPT_MAP } from "../../config/api";
+import { CPT_MAP, API_URL } from "../../config/api";
 import { NotifBell } from "../ui/NotifBell";
 import { AdminDash } from "../pages/admin/AdminDash";
 import { AdminAlertQueue } from "../pages/admin/AdminAlertQueue";
@@ -75,6 +75,41 @@ export function Shell({ user, onLogout, staffList, setStaffList, alerts, setAler
         }
         prevWorkDone.current = workDone;
     }, [workDone]);
+
+    // Toast for incoming chat messages
+    const lastChatId = useRef(Date.now());
+    useEffect(() => {
+        const pollChats = async () => {
+            try {
+                const res = await fetch(`${API_URL}/states`);
+                const data = await res.json();
+                if (data._chats && Array.isArray(data._chats)) {
+                    const newMessages = data._chats.filter(c => c.recipientEmail === user.email && c.id > lastChatId.current);
+
+                    if (newMessages.length > 0) {
+                        newMessages.forEach(msg => {
+                            toast(`New message from ${msg.senderName}: "${msg.text.substring(0, 30)}${msg.text.length > 30 ? '...' : ''}"`, {
+                                icon: "💬",
+                                duration: 5000,
+                                style: { fontFamily: "var(--font)", border: "1px solid var(--accent)", color: "var(--text)", fontWeight: 600, background: "var(--bg)" }
+                            });
+                            addNotif({
+                                type: "chat",
+                                title: `Message from ${msg.senderName}`,
+                                message: msg.text,
+                                time: "Just now"
+                            });
+                        });
+                        lastChatId.current = Math.max(...newMessages.map(m => m.id));
+                    }
+                }
+            } catch (e) {
+                // silenty fail
+            }
+        };
+        const interval = setInterval(pollChats, 4000);
+        return () => clearInterval(interval);
+    }, [user.email]);
 
     const isStaffRole = ["Revenue Department", "Medical Coding", "Insurance Claims"].includes(user.role);
 
