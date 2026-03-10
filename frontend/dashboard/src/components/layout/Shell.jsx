@@ -241,7 +241,7 @@ export function Shell({ user, onLogout, staffList, setStaffList, alerts, setAler
                     </div>
                 ) : pages[page] || <div className="page"><div className="empty">Page not found</div></div>}
             </div>
-            <Toaster position="bottom-right" />
+            <Toaster position="top-right" containerStyle={{ top: 70 }} />
         </div>
     );
 }

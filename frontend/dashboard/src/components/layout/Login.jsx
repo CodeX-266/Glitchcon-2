@@ -120,7 +120,7 @@ export function Login({ onLogin, staffList, setStaffList }) {
 
     return (
         <div className="lp">
-            <Toaster position="bottom-right" />
+            <Toaster position="top-right" />
             <div className="lbox">
                 <div className="lbox-top">
                     <div className="l-chip"><i />Hospital Analytics Platform</div>

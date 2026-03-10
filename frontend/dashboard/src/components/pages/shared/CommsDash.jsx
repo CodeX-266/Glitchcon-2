@@ -9,8 +9,12 @@ export function CommsDash({ currentUser, staffList, addNotif }) {
 
     // Chat state
     const [chats, setChats] = useState([]);
-    const [selectedEmail, setSelectedEmail] = useState("");
+    const [selectedEmail, setSelectedEmail] = useState(currentUser.role === "Admin" ? "GLOBAL_ALL" : "");
     const [messageText, setMessageText] = useState("");
+    const [lastRead, setLastRead] = useState(() => {
+        const saved = localStorage.getItem(`rld_chat_read_${currentUser.id}`);
+        return saved ? JSON.parse(saved) : {};
+    });
     const isAdmin = currentUser.role === "Admin";
 
     // Only non-admin staff that are approved (or all, but usually approved ones communicate)
@@ -41,7 +45,27 @@ export function CommsDash({ currentUser, staffList, addNotif }) {
 
     useEffect(() => {
         chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
-    }, [chats, selectedEmail]);
+        if (selectedEmail && chats.length > 0) {
+            let maxId = 0;
+            if (selectedEmail === "GLOBAL_ALL") {
+                maxId = Math.max(...chats.map(m => m.id));
+            } else {
+                const thread = chats.filter(msg =>
+                    (msg.senderEmail === selectedEmail && msg.recipientEmail === currentUser.email) ||
+                    (msg.senderEmail === currentUser.email && msg.recipientEmail === selectedEmail)
+                );
+                if (thread.length > 0) maxId = Math.max(...thread.map(m => m.id));
+            }
+            if (maxId > 0) {
+                setLastRead(prev => {
+                    if (prev[selectedEmail] === maxId) return prev;
+                    const next = { ...prev, [selectedEmail]: maxId };
+                    localStorage.setItem(`rld_chat_read_${currentUser.id}`, JSON.stringify(next));
+                    return next;
+                });
+            }
+        }
+    }, [chats, selectedEmail, currentUser.id]);
 
     const handleBroadcast = async () => {
         if (!announcement.trim()) return;
@@ -91,14 +115,38 @@ export function CommsDash({ currentUser, staffList, addNotif }) {
         }
     };
 
+    const getContactLastMessage = (contactEmail) => {
+        const thread = chats.filter(msg =>
+            (msg.senderEmail === contactEmail && msg.recipientEmail === currentUser.email) ||
+            (msg.senderEmail === currentUser.email && msg.recipientEmail === contactEmail)
+        );
+        if (thread.length === 0) return { text: "No messages yet", time: null };
+        const lastMsg = thread[thread.length - 1];
+        return {
+            text: `${lastMsg.senderEmail === currentUser.email ? "You: " : ""}${lastMsg.text}`,
+            time: lastMsg.timestamp
+        };
+    };
+
+    const getUnreadCount = (contactEmail) => {
+        const lastReadId = lastRead[contactEmail] || 0;
+        return chats.filter(msg =>
+            msg.senderEmail === contactEmail &&
+            msg.recipientEmail === currentUser.email &&
+            msg.id > lastReadId
+        ).length;
+    };
+
+    const getGlobalUnreadCount = () => {
+        const lastReadId = lastRead["GLOBAL_ALL"] || 0;
+        return chats.filter(msg => msg.id > lastReadId).length;
+    };
+
     // Filter messages for rendering
     let displayChats = [];
-    if (isAdmin) {
-        // Admin sees EVERYTHING
+    if (isAdmin && selectedEmail === "GLOBAL_ALL") {
         displayChats = [...chats];
-    } else {
-        // Staff sees messages where they are sender AND recipient is selectedEmail
-        // OR where they are recipient AND sender is selectedEmail
+    } else if (selectedEmail && selectedEmail !== "GLOBAL_ALL") {
         displayChats = chats.filter(c =>
             (c.senderEmail === currentUser.email && c.recipientEmail === selectedEmail) ||
             (c.senderEmail === selectedEmail && c.recipientEmail === currentUser.email)
@@ -111,46 +159,115 @@ export function CommsDash({ currentUser, staffList, addNotif }) {
         <div className="page" style={{ maxWidth: 1400, margin: "0 auto", display: "grid", gridTemplateColumns: isAdmin ? "1fr 400px" : "1fr", gap: 24 }}>
 
             {/* ═══ LEFT/MAIN: CHAT INTERFACE ═══ */}
-            <div style={{ display: "flex", flexDirection: "column", gap: 24, height: "calc(100vh - 120px)" }}>
+            <div style={{ display: "flex", gap: 0, height: "calc(100vh - 120px)", border: "1px solid var(--border)", borderRadius: 12, overflow: "hidden", background: "var(--card)" }}>
 
-                <div className="card" style={{ flex: 1, display: "flex", flexDirection: "column", padding: 0, overflow: "hidden" }}>
+                {/* ── Chat Sidebar (WhatsApp List) ── */}
+                <div style={{ width: 280, borderRight: "1px solid var(--border)", display: "flex", flexDirection: "column", background: "var(--bg)" }}>
+                    <div style={{ padding: "16px 20px", borderBottom: "1px solid var(--border)", background: "rgba(0,0,0,0.15)", fontWeight: 700, fontSize: 14, display: "flex", alignItems: "center", gap: 8 }}>
+                        {isAdmin ? <ShieldCheck size={18} style={{ color: "var(--accent)" }} /> : <MessagesSquare size={18} style={{ color: "var(--accent)" }} />}
+                        {isAdmin ? "Global Monitor" : "Contacts"}
+                    </div>
+                    <div style={{ flex: 1, overflowY: "auto" }}>
+                        {isAdmin && (() => {
+                            const globalUnread = selectedEmail === "GLOBAL_ALL" ? 0 : getGlobalUnreadCount();
+                            return (
+                                <div
+                                    onClick={() => setSelectedEmail("GLOBAL_ALL")}
+                                    style={{
+                                        padding: "12px 16px", cursor: "pointer",
+                                        background: selectedEmail === "GLOBAL_ALL" ? "rgba(255,255,255,0.08)" : "transparent",
+                                        borderBottom: "1px solid var(--border)", display: "flex", alignItems: "center", gap: 12
+                                    }}
+                                >
+                                    <div style={{ width: 40, height: 40, borderRadius: "50%", background: "var(--warn)", color: "#000", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, flexShrink: 0 }}>
+                                        <ShieldCheck size={20} />
+                                    </div>
+                                    <div style={{ flex: 1, overflow: "hidden" }}>
+                                        <div style={{ fontWeight: 600, fontSize: 14 }}>All Staff Feed</div>
+                                        <div style={{ fontSize: 12, color: "var(--muted)" }}>Monitor all messages</div>
+                                    </div>
+                                    {globalUnread > 0 && (
+                                        <div style={{ background: "var(--warn)", color: "#000", fontSize: 10, fontWeight: 700, padding: "2px 6px", borderRadius: 10, minWidth: 18, textAlign: "center" }}>
+                                            {globalUnread}
+                                        </div>
+                                    )}
+                                </div>
+                            );
+                        })()}
+                        {contacts.map(c => {
+                            const last = getContactLastMessage(c.email);
+                            const unreadCount = selectedEmail === c.email ? 0 : getUnreadCount(c.email);
+                            const isActive = selectedEmail === c.email;
+                            return (
+                                <div
+                                    key={c.email}
+                                    onClick={() => setSelectedEmail(c.email)}
+                                    style={{
+                                        padding: "12px 16px", borderBottom: "1px solid var(--border)", cursor: "pointer",
+                                        background: isActive ? "rgba(255,255,255,0.08)" : "transparent",
+                                        display: "flex", alignItems: "center", gap: 12, transition: "background 0.2s"
+                                    }}
+                                >
+                                    <div style={{ width: 40, height: 40, borderRadius: "50%", background: "var(--accent)", color: "#000", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, flexShrink: 0 }}>
+                                        {c.name.charAt(0)}
+                                    </div>
+                                    <div style={{ flex: 1, overflow: "hidden" }}>
+                                        <div style={{ fontWeight: 600, fontSize: 14, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{c.name}</div>
+                                        <div style={{ fontSize: 12, color: unreadCount > 0 ? "var(--text)" : "var(--muted)", fontWeight: unreadCount > 0 ? 600 : 400, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{last.text}</div>
+                                    </div>
+                                    <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 4 }}>
+                                        {last.time && (
+                                            <div style={{ fontSize: 10, color: unreadCount > 0 ? "var(--accent)" : "var(--muted)", fontWeight: unreadCount > 0 ? 700 : 400 }}>
+                                                {new Date(last.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                            </div>
+                                        )}
+                                        {unreadCount > 0 && (
+                                            <div style={{ background: "var(--accent)", color: "#000", fontSize: 10, fontWeight: 700, padding: "2px 6px", borderRadius: 10, minWidth: 18, textAlign: "center" }}>
+                                                {unreadCount}
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                </div>
 
-                    {/* Chat Header */}
-                    <div style={{ padding: "16px 20px", borderBottom: "1px solid var(--border)", display: "flex", justifyContent: "space-between", alignItems: "center", background: "rgba(0,0,0,0.15)" }}>
-                        <div style={{ display: "flex", gap: 10, alignItems: "center", fontWeight: 700, fontSize: 14 }}>
-                            {isAdmin ? <ShieldCheck size={18} style={{ color: "var(--accent)" }} /> : <MessagesSquare size={18} style={{ color: "var(--accent)" }} />}
-                            {isAdmin ? "Global Communication Monitor (Admin View)" : "Staff Communications"}
-                        </div>
-
-                        {/* Selector for Chat */}
-                        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                            <Mail size={14} style={{ color: "var(--muted)" }} />
-                            <select
-                                className="sel"
-                                value={selectedEmail}
-                                onChange={e => setSelectedEmail(e.target.value)}
-                                style={{ padding: "6px 12px", width: 250 }}
-                            >
-                                <option value="">{isAdmin ? "Select Staff (Optional)" : "-- Select Contact to Chat --"}</option>
-                                {contacts.map(c => (
-                                    <option key={c.email} value={c.email}>{c.name} ({c.email})</option>
-                                ))}
-                            </select>
-                        </div>
+                {/* ── Chat Window ── */}
+                <div style={{ flex: 1, display: "flex", flexDirection: "column", background: "rgba(0,0,0,0.02)" }}>
+                    {/* Header */}
+                    <div style={{ padding: "16px 20px", borderBottom: "1px solid var(--border)", background: "rgba(0,0,0,0.05)", display: "flex", alignItems: "center", gap: 12 }}>
+                        {selectedEmail === "GLOBAL_ALL" ? (
+                            <>
+                                <div style={{ width: 34, height: 34, borderRadius: "50%", background: "var(--warn)", color: "#000", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700 }}><ShieldCheck size={16} /></div>
+                                <div><div style={{ fontWeight: 700, fontSize: 14 }}>Global Communication Monitor</div><div style={{ fontSize: 11, color: "var(--muted)" }}>Live View</div></div>
+                            </>
+                        ) : selectedEmail ? (
+                            <>
+                                <div style={{ width: 34, height: 34, borderRadius: "50%", background: "var(--accent)", color: "#000", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700 }}>
+                                    {contacts.find(c => c.email === selectedEmail)?.name.charAt(0)}
+                                </div>
+                                <div><div style={{ fontWeight: 700, fontSize: 14 }}>{contacts.find(c => c.email === selectedEmail)?.name}</div><div style={{ fontSize: 11, color: "var(--muted)" }}>{selectedEmail}</div></div>
+                            </>
+                        ) : (
+                            <div style={{ fontWeight: 600, color: "var(--muted)", display: "flex", alignItems: "center", gap: 8 }}><MessagesSquare size={16} /> Select a contact to start chatting</div>
+                        )}
                     </div>
 
-                    {/* Chat Body */}
-                    <div className="tw" style={{ flex: 1, overflowY: "auto", border: "none", margin: 0, padding: 20, background: "rgba(0,0,0,0.05)" }}>
-                        {displayChats.length === 0 ? (
+                    {/* Messages Body */}
+                    <div className="tw" style={{ flex: 1, overflowY: "auto", border: "none", margin: 0, padding: 20 }}>
+                        {!selectedEmail ? (
                             <div className="empty" style={{ height: "100%", border: "none" }}>
                                 <div className="empty-ico"><MessagesSquare size={28} /></div>
-                                {isAdmin ? "No messages found in the global feed." : "No messages found. Select a contact to start chatting!"}
+                                Select a contact from the sidebar to view your conversation.
                             </div>
+                        ) : displayChats.length === 0 ? (
+                            <div className="empty" style={{ height: "100%", border: "none" }}>No messages yet. Say hello!</div>
                         ) : (
                             <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
                                 {displayChats.map(c => {
                                     const isMe = c.senderEmail === currentUser.email;
-                                    const isGlobalAdminView = isAdmin;
+                                    const isGlobalAdminView = isAdmin && selectedEmail === "GLOBAL_ALL";
 
                                     return (
                                         <div key={c.id} style={{
@@ -160,7 +277,7 @@ export function CommsDash({ currentUser, staffList, addNotif }) {
                                         }}>
                                             <div style={{ fontSize: 11, color: "var(--muted)", marginBottom: 4, display: "flex", gap: 6, alignItems: "center" }}>
                                                 {isGlobalAdminView ? (
-                                                    <span style={{ fontWeight: 600, color: "var(--text)" }}>{c.senderEmail} <span style={{ color: "var(--muted)", fontWeight: 400 }}>to</span> {c.recipientEmail}</span>
+                                                    <span style={{ fontWeight: 600, color: "var(--text)" }}>{c.senderName} <span style={{ color: "var(--muted)", fontWeight: 400 }}>to</span> {contacts.find(con => con.email === c.recipientEmail)?.name || "You"}</span>
                                                 ) : (
                                                     <span style={{ fontWeight: 600 }}>{isMe ? "You" : c.senderName}</span>
                                                 )}
@@ -189,12 +306,12 @@ export function CommsDash({ currentUser, staffList, addNotif }) {
                     </div>
 
                     {/* Chat Input */}
-                    {(!isAdmin || selectedEmail) && (
+                    {selectedEmail && selectedEmail !== "GLOBAL_ALL" && (
                         <div style={{ padding: "16px 20px", borderTop: "1px solid var(--border)", background: "var(--card)", display: "flex", gap: 12 }}>
                             <input
                                 type="text"
                                 className="tinput"
-                                placeholder={`Type a message to ${selectedEmail || "select a contact"}...`}
+                                placeholder={`Type a message...`}
                                 value={messageText}
                                 onChange={e => setMessageText(e.target.value)}
                                 disabled={!selectedEmail}
