@@ -3,12 +3,15 @@ export const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 export const CPT_MAP = {
     "MRI Brain": "70553", "Blood Panel": "80050", "CT Abdomen": "74178", "Cardiac Echo": "93306",
     "Knee Surgery": "27447", "Colonoscopy": "45378", "Ultrasound": "76700", "Sleep Study": "95808",
-    "X-Ray Chest": "71046", "Spinal Fusion": "22633", "Appendectomy": "44970", "Thyroid Panel": "84443",
-    "Liver Biopsy": "47000", "Angioplasty": "92920", "Hip Replacement": "27130", "Cataract Surgery": "66984",
-    "Tonsillectomy": "42826", "Dialysis": "90935", "Bone Density": "77080", "PET Scan": "78815",
-    "EEG": "95819", "EMG": "95907", "Mammogram": "77067", "Stress Test": "93015",
-    "Knee Replacement": "27447", "Esophageal Endoscopy": "43235", "EEG Monitoring": "95951",
-    "Chest CT": "71250", "Vitamin D Test": "82306", "Cardiac Catheterization": "93458",
+    "X-Ray Chest": "71020", "Thyroid Test": "84443", "Appendectomy": "44950", "Angiography": "93510",
+    "CT Brain": "70450", "Glucose Test": "82947", "Endoscopy": "43235", "EEG": "95816",
+    "Stress Test": "93015", "Liver Panel": "80076", "Spine MRI": "72148", "Arthroscopy": "29881",
+    "CT Chest": "71260", "Blood Culture": "87040", "Angioplasty": "92928", "Gallbladder Surgery": "47562",
+    "Upper GI Endoscopy": "43239", "Nerve Conduction Study": "95907", "Abdominal Ultrasound": "76705",
+    "Lipid Profile": "80061", "Pacemaker Implant": "33208", "Hernia Repair": "49505", "Brain MRI": "70551",
+    "Complete Blood Count": "85025", "Angiogram": "93508", "Knee Replacement": "27447",
+    "Esophageal Endoscopy": "43235", "EEG Monitoring": "95951", "Chest CT": "71250",
+    "Vitamin D Test": "82306", "Cardiac Catheterization": "93458"
 };
 
 export const RECOMMENDATIONS = {

@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Toaster, toast } from 'react-hot-toast';
 import { NAV, PAGE_TITLES } from "../../config/navigation";
+import { CPT_MAP } from "../../config/api";
 import { NotifBell } from "../ui/NotifBell";
 import { AdminDash } from "../pages/admin/AdminDash";
 import { AdminAlertQueue } from "../pages/admin/AdminAlertQueue";
@@ -110,6 +111,32 @@ export function Shell({ user, onLogout, staffList, setStaffList, alerts, setAler
                             ))}
                         </div>
                     ))}
+
+                    {/* MEDICAL CPT CODES REFERENCE LIST */}
+                    {(user.role === "Admin" || user.role === "Medical Coding") && (
+                        <div style={{ marginTop: 24, paddingBottom: 16 }}>
+                            <div className="nav-sec" style={{ paddingLeft: 16, marginBottom: 8, display: "flex", alignItems: "center", gap: 6 }}>
+                                <ClipboardList size={14} /> Medical CPT Codes
+                            </div>
+                            <div style={{
+                                maxHeight: 180, overflowY: "auto", margin: "0 16px",
+                                background: "rgba(0,0,0,0.15)", border: "1px solid var(--border)",
+                                borderRadius: 8, padding: "6px 10px"
+                            }} className="tw">
+                                <style>{`.tw::-webkit-scrollbar { width: 4px; } .tw::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }`}</style>
+                                {Object.entries(CPT_MAP).map(([proc, code]) => (
+                                    <div key={proc} style={{
+                                        display: "flex", justifyContent: "space-between", alignItems: "center",
+                                        padding: "6px 0", borderBottom: "1px solid rgba(255,255,255,0.03)",
+                                        fontSize: 11, color: "var(--muted)"
+                                    }}>
+                                        <span style={{ flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", paddingRight: 8 }}>{proc}</span>
+                                        <strong style={{ color: "var(--nav-text)", fontFamily: "var(--mono)", background: "rgba(255,255,255,0.05)", padding: "2px 6px", borderRadius: 4 }}>{code}</strong>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
                 </nav>
                 <div className="sb-foot">
                     <div className={`sb-av ${nav.cls}`}>{user.name.split(" ").map(n => n[0]).join("")}</div>
