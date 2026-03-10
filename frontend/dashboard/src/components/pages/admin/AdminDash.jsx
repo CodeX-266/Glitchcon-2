@@ -131,6 +131,46 @@ export function AdminDash({ alerts, setAlerts, staffList, csvAccess, setCsvAcces
         }
     };
 
+    const handleRevokeAll = async () => {
+        let revokedCount = 0;
+        const stateUpdates = {};
+
+        const updatedAlerts = alerts.map(a => {
+            if (a.status === "Assigned") {
+                revokedCount++;
+                const newPrio = a.aiScore > 80 ? "Critical" : a.aiScore > 50 ? "High" : "Medium";
+
+                // Add to state updates payload with nulls explicitly set 
+                // so the backend overwrites existing values.
+                stateUpdates[a.id] = {
+                    status: "New",
+                    assignedTo: null,
+                    priority: newPrio
+                };
+
+                return { ...a, status: "New", assignedTo: null, priority: newPrio };
+            }
+            return a;
+        });
+
+        if (revokedCount > 0) {
+            setAlerts(updatedAlerts);
+
+            // Important: actively overwrite the states in the backend 
+            // so pollers on other devices see the "Revoked" state instead of old state.
+            fetch(`${API_URL}/states`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(stateUpdates),
+            }).catch(() => { });
+
+            toast.success(`Revoked ${revokedCount} tasks back to Unassigned pool.`, { duration: 4000, style: { background: "var(--bg)", color: "var(--text)", border: "1px solid var(--border)" } });
+            if (addNotif) addNotif({ type: "revoke", title: "Tasks Revoked", message: `Admin gracefully revoked ${revokedCount} assigned tasks.`, time: "Just now" });
+        } else {
+            toast("No currently 'Assigned' tasks to revoke.", { style: { background: "var(--bg)", color: "var(--text)", border: "1px solid var(--border)" } });
+        }
+    };
+
     const handleApprove = (id) => {
         setAlerts(prev => prev.map(a => a.id === id ? { ...a, status: "Verified" } : a));
         toast.success("Task approved & verified!", { icon: "✅", duration: 3000, style: { border: "1px solid var(--ok)", background: "var(--bg)", color: "var(--text)" } });
@@ -177,6 +217,9 @@ export function AdminDash({ alerts, setAlerts, staffList, csvAccess, setCsvAcces
                                 <span style={{ fontSize: 11, color: "var(--muted)", fontWeight: 400 }}>({filteredAlerts.length} rows)</span>
                             </div>
                             <div style={{ display: "flex", gap: 8 }}>
+                                <button className="btn btn-a" onClick={handleRevokeAll} disabled={assignedCount === 0} style={{ display: "flex", gap: 6, fontWeight: 700, fontSize: 12 }}>
+                                    <X size={14} /> Revoke All ({alerts.filter(a => a.status === "Assigned").length})
+                                </button>
                                 <button className="btn btn-p" onClick={handleAutoAssign} disabled={unassigned === 0} style={{ display: "flex", gap: 6, fontWeight: 700, fontSize: 12 }}>
                                     <Zap size={14} /> Auto-Assign ({unassigned})
                                 </button>

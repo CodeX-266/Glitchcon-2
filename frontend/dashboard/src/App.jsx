@@ -32,14 +32,12 @@ export default function App() {
   const extractStates = (alertsArr) => {
     const states = {};
     alertsArr.forEach(a => {
-      if (a.status !== "New" || a.assignedTo || (a.notes && a.notes.length > 0)) {
-        states[a.id] = {
-          status: a.status,
-          assignedTo: a.assignedTo || null,
-          priority: a.priority,
-          notes: a.notes || [],
-        };
-      }
+      states[a.id] = {
+        status: a.status,
+        assignedTo: a.assignedTo || null,
+        priority: a.priority,
+        notes: a.notes || [],
+      };
     });
     return states;
   };
