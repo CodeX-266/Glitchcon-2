@@ -13,7 +13,8 @@ import { FinanceDash } from "../pages/finance/FinanceDash";
 import { FinanceReports } from "../pages/finance/FinanceReports";
 import { StaffDash } from "../pages/staff/StaffDash";
 import { StaffMyWork } from "../pages/staff/StaffMyWork";
-import { LayoutDashboard, AlertTriangle, Cpu, Users, Inbox, BarChart3, ClipboardList, LogOut, CheckCircle, X, Sun, Moon, Search } from "lucide-react";
+import { CommsDash } from "../pages/shared/CommsDash";
+import { LayoutDashboard, AlertTriangle, Cpu, Users, Inbox, BarChart3, ClipboardList, LogOut, CheckCircle, X, Sun, Moon, Search, MessagesSquare } from "lucide-react";
 
 const ICON_MAP = {
     "dash": <LayoutDashboard size={16} />,
@@ -23,6 +24,7 @@ const ICON_MAP = {
     "inbox": <Inbox size={16} />,
     "reports": <BarChart3 size={16} />,
     "work": <ClipboardList size={16} />,
+    "comms": <MessagesSquare size={16} />,
 };
 
 export function Shell({ user, onLogout, staffList, setStaffList, alerts, setAlerts, notifs, setNotifs, loading, fetchAlerts }) {
@@ -87,6 +89,7 @@ export function Shell({ user, onLogout, staffList, setStaffList, alerts, setAler
         "inbox": <RCMInbox alerts={alerts} setAlerts={setAlerts} />,
         "reports": <FinanceReports alerts={alerts} />,
         "work": <StaffMyWork currentUser={user} alerts={alerts} setAlerts={setAlerts} addNotif={addNotif} />,
+        "comms": <CommsDash currentUser={user} staffList={staffList} addNotif={addNotif} />,
     };
 
     return (

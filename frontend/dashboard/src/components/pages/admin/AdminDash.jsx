@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 import { SBadge, PBadge } from "../../ui/Badge";
-import { CheckCircle, Zap, ShieldCheck, Check, X, Database, Users, LayoutList, AlertTriangle, Upload, FileSpreadsheet, RefreshCw, Megaphone, Send } from "lucide-react";
+import { CheckCircle, Zap, ShieldCheck, Check, X, Database, Users, LayoutList, AlertTriangle, Upload, FileSpreadsheet, RefreshCw } from "lucide-react";
 import { API_URL } from "../../../config/api";
 import toast from "react-hot-toast";
 
@@ -10,8 +10,6 @@ export function AdminDash({ alerts, setAlerts, staffList, csvAccess, setCsvAcces
     const [uploading, setUploading] = useState(false);
     const [uploadStatus, setUploadStatus] = useState(null); // null | 'uploaded' | 'analyzing' | 'done' | 'error'
     const [fileName, setFileName] = useState("");
-    const [announcement, setAnnouncement] = useState("");
-    const [broadcasting, setBroadcasting] = useState(false);
     const fileRef = useRef(null);
 
     const handleCSVUpload = async (file) => {
@@ -185,25 +183,6 @@ export function AdminDash({ alerts, setAlerts, staffList, csvAccess, setCsvAcces
         if (addNotif) addNotif({ type: "reject", title: "Task Rejected", message: `Alert ${id} sent back to staff.`, time: "Just now" });
     };
 
-    const handleBroadcast = async () => {
-        if (!announcement.trim()) return;
-        setBroadcasting(true);
-        try {
-            const annObj = { id: Date.now(), msg: announcement.trim() };
-            await fetch(`${API_URL}/states`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ _global_announcement: annObj })
-            });
-            toast.success("Broadcast sent to all active users!", { duration: 4000, style: { background: "var(--bg)", color: "var(--text)", border: "1px solid var(--ok)" } });
-            if (addNotif) addNotif({ type: "announcement", title: "Broadcast Sent", message: announcement.trim(), time: "Just now" });
-            setAnnouncement("");
-        } catch (e) {
-            toast.error("Failed to broadcast message.");
-        }
-        setBroadcasting(false);
-    };
-
     const getStaffName = (id) => staffList.find(s => s.id === id)?.name || "—";
     const getStaffRole = (id) => staffList.find(s => s.id === id)?.role || "—";
 
@@ -362,31 +341,6 @@ export function AdminDash({ alerts, setAlerts, staffList, csvAccess, setCsvAcces
 
                 {/* ═══ RIGHT: APPROVAL + ACCESS ═══ */}
                 <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
-
-                    {/* GLOBAL ANNOUNCEMENT */}
-                    <div className="card" style={{ border: "1px solid rgba(236, 72, 153, 0.3)", background: "linear-gradient(180deg, rgba(236, 72, 153, 0.05) 0%, rgba(0,0,0,0) 120px)" }}>
-                        <div className="ct" style={{ borderBottom: "1px solid var(--border)", paddingBottom: 12, marginBottom: 14, display: "flex", alignItems: "center", gap: 8 }}>
-                            <Megaphone size={18} style={{ color: "#ec4899" }} /> Global Announcement
-                        </div>
-                        <p style={{ fontSize: 12, color: "var(--muted)", marginBottom: 12 }}>
-                            Broadcast a high-priority alert to all staff dashboards instantly.
-                        </p>
-                        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                            <textarea
-                                className="tinput"
-                                placeholder="e.g., Servers will be down at 5PM for maintenance..."
-                                value={announcement}
-                                onChange={e => setAnnouncement(e.target.value)}
-                                style={{ minHeight: 60, resize: "none", fontSize: 13 }}
-                            />
-                            <button className="btn"
-                                onClick={handleBroadcast}
-                                disabled={!announcement.trim() || broadcasting}
-                                style={{ background: "#ec4899", color: "#fff", display: "flex", justifyContent: "center", alignItems: "center", gap: 6, fontWeight: 700 }}>
-                                <Send size={14} /> {broadcasting ? "Broadcasting..." : "Broadcast Message"}
-                            </button>
-                        </div>
-                    </div>
 
                     {/* ADMIN VERIFY/REJECT */}
                     <div className="card" style={{ border: "1px solid rgba(245, 158, 11, 0.3)", background: "linear-gradient(180deg, rgba(245, 158, 11, 0.05) 0%, rgba(0,0,0,0) 120px)" }}>

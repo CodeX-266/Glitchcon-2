@@ -41,6 +41,7 @@ export const NAV = {
             },
             {
                 label: "Management", items: [
+                    { id: "comms", label: "Comms & Chat" },
                     { id: "users", label: "User Management", badge: "pendingStaff" },
                 ]
             },
@@ -53,6 +54,7 @@ export const NAV = {
             {
                 label: "Claims Work", items: [
                     { id: "inbox", label: "Alert Inbox", badge: "assigned" },
+                    { id: "comms", label: "Comms & Chat" },
                 ]
             },
         ],
@@ -64,6 +66,7 @@ export const NAV = {
             {
                 label: "Analytics", items: [
                     { id: "reports", label: "Reports & Export" },
+                    { id: "comms", label: "Comms & Chat" },
                 ]
             },
         ],
@@ -75,6 +78,7 @@ export const NAV = {
             {
                 label: "My Work", items: [
                     { id: "work", label: "My Tasks", badge: "myTasks" },
+                    { id: "comms", label: "Comms & Chat" },
                 ]
             },
         ],
@@ -86,6 +90,7 @@ export const NAV = {
             {
                 label: "My Work", items: [
                     { id: "work", label: "My Tasks", badge: "myTasks" },
+                    { id: "comms", label: "Comms & Chat" },
                 ]
             },
         ],
@@ -97,6 +102,7 @@ export const NAV = {
             {
                 label: "My Work", items: [
                     { id: "work", label: "My Tasks", badge: "myTasks" },
+                    { id: "comms", label: "Comms & Chat" },
                 ]
             },
         ],
