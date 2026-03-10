@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { API_URL } from "./config/api";
+import { Toaster, toast } from 'react-hot-toast';
 import { transformAlerts } from "./utils/transforms";
 import { auth, db } from "./config/firebase";
 import { signOut, onAuthStateChanged } from "firebase/auth";
@@ -84,6 +85,15 @@ export default function App() {
         try {
           const stRes = await fetch(`${API_URL}/states`);
           serverStates = await stRes.json();
+
+          if (serverStates._global_announcement) {
+            const ann = serverStates._global_announcement;
+            if (ann.id && String(ann.id) !== localStorage.getItem("rld_last_ann")) {
+              localStorage.setItem("rld_last_ann", String(ann.id));
+              setNotifs(p => [{ id: Date.now(), type: "announcement", title: "🚨 Priority Announcement", message: ann.msg, read: false, time: "Just now" }, ...p]);
+              toast(ann.msg, { duration: 8000, icon: "📢", style: { border: "1px solid var(--accent)", background: "var(--card)", color: "var(--text)", fontWeight: 700 } });
+            }
+          }
         } catch (e) { }
 
         const merged = baseAlerts.map(a => ({
